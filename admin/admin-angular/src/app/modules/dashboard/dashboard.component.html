@@ -1,0 +1,83 @@
+<div class="page">
+  <h1>Dashboard</h1>
+
+  <!-- Cards de métricas -->
+  <div class="cards-row">
+    <mat-card class="metric-card">
+      <mat-card-content>
+        <mat-icon class="metric-icon orange">receipt_long</mat-icon>
+        <div class="metric-value">{{ pedidosPendentes.length }}</div>
+        <div class="metric-label">Pedidos aguardando</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <mat-card-content>
+        <mat-icon class="metric-icon blue">delivery_dining</mat-icon>
+        <div class="metric-value">{{ entregasPendentes.length }}</div>
+        <div class="metric-label">Entregas pendentes</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <mat-card-content>
+        <mat-icon class="metric-icon green">two_wheeler</mat-icon>
+        <div class="metric-value">{{ motoboysDisponiveis.length }}</div>
+        <div class="metric-label">Motoboys disponíveis</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Tabela de entregas pendentes -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Entregas pendentes de atribuição</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (entregasPendentes.length) {
+        <table mat-table [dataSource]="entregasPendentes" class="full-width">
+
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let e">{{ e.pedido.clienteNome }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="endereco">
+            <th mat-header-cell *matHeaderCellDef>Endereço</th>
+            <td mat-cell *matCellDef="let e">{{ e.pedido.enderecoEntrega }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef>Valor</th>
+            <td mat-cell *matCellDef="let e">R$ {{ e.pedido.valorTotal | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="acao">
+            <th mat-header-cell *matHeaderCellDef>Atribuir motoboy</th>
+            <td mat-cell *matCellDef="let e">
+              <mat-form-field appearance="outline" class="select-motoboy">
+                <mat-select placeholder="Selecionar"
+                            (selectionChange)="atribuirMotoboy(e.id, $event.value)">
+                  @for (m of motoboysDisponiveis; track m.id) {
+                    <mat-option [value]="m.id">{{ m.nome }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+          <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+        </table>
+      } @else {
+        <p class="vazio">Nenhuma entrega pendente de atribuição.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+

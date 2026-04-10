@@ -1,0 +1,115 @@
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <h1>Lojas</h1>
+    <button mat-raised-button color="primary" (click)="mostrarForm = !mostrarForm">
+      <mat-icon>{{ mostrarForm ? 'close' : 'add' }}</mat-icon>
+      {{ mostrarForm ? 'Cancelar' : 'Nova Loja' }}
+    </button>
+  </div>
+
+  <!-- Formulário -->
+  @if (mostrarForm) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>Cadastrar loja</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput [(ngModel)]="nova.nome" placeholder="Nome da loja">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>CNPJ</mat-label>
+            <input matInput [(ngModel)]="nova.cnpj" placeholder="00.000.000/0000-00">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" [(ngModel)]="nova.email" placeholder="loja@exemplo.com">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput [(ngModel)]="nova.telefone" placeholder="(11) 3333-0000">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Endereço</mat-label>
+            <input matInput [(ngModel)]="nova.endereco" placeholder="Rua, número, bairro">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Chave PIX</mat-label>
+            <input matInput [(ngModel)]="nova.chavePix" placeholder="Chave PIX para repasse">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button (click)="mostrarForm = false">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="criar()">
+          <mat-icon>save</mat-icon> Salvar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  <!-- Tabela -->
+  <mat-card>
+    <mat-card-content>
+      @if (lojas.length) {
+        <table mat-table [dataSource]="lojas" class="full-width">
+
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let l">{{ l.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let l">{{ l.nome }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="cnpj">
+            <th mat-header-cell *matHeaderCellDef>CNPJ</th>
+            <td mat-cell *matCellDef="let l">{{ l.cnpj }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let l">{{ l.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="telefone">
+            <th mat-header-cell *matHeaderCellDef>Telefone</th>
+            <td mat-cell *matCellDef="let l">{{ l.telefone }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="saldo">
+            <th mat-header-cell *matHeaderCellDef>Saldo pendente</th>
+            <td mat-cell *matCellDef="let l" class="valor">
+              R$ {{ l.saldoPendente | number:'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let l">
+              <span class="status-badge" [ngClass]="l.ativo ? 'status-ativo' : 'status-inativo'">
+                {{ l.ativo ? 'Ativa' : 'Inativa' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+          <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+        </table>
+      } @else {
+        <p class="vazio">Nenhuma loja cadastrada.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+

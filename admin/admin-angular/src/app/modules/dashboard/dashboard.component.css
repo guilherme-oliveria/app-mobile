@@ -1,0 +1,64 @@
+.page {
+  padding: 24px;
+}
+
+h1 {
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+
+.cards-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  flex: 1;
+  text-align: center;
+}
+
+.metric-icon {
+  font-size: 36px;
+  height: 36px;
+  width: 36px;
+  margin-bottom: 8px;
+}
+
+.metric-icon.orange { color: #FF6B00; }
+.metric-icon.blue   { color: #2563eb; }
+.metric-icon.green  { color: #16a34a; }
+
+.metric-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.metric-label {
+  font-size: 0.875rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.select-motoboy {
+  width: 200px;
+  font-size: 0.875rem;
+}
+
+::ng-deep .select-motoboy .mat-mdc-form-field-infix {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  min-height: 40px !important;
+}
+
+.vazio {
+  text-align: center;
+  color: #999;
+  padding: 32px 0;
+}
+

@@ -1,0 +1,36 @@
+.page {
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font-weight: 400;
+}
+
+.filtro-select {
+  width: 220px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.vazio {
+  text-align: center;
+  color: #999;
+  padding: 32px 0;
+}
+
+button mat-icon {
+  margin-right: 4px;
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+

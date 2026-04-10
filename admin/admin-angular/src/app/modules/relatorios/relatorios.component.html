@@ -1,0 +1,99 @@
+<div class="page">
+  <h1>Relatórios — Liquidações Diárias</h1>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="loja-select">
+      <mat-label>Selecione uma loja</mat-label>
+      <mat-select [(value)]="lojaId" (selectionChange)="carregarLiquidacoes()">
+        <mat-option [value]="null">-- Selecione --</mat-option>
+        @for (l of lojas; track l.id) {
+          <mat-option [value]="l.id">{{ l.nome }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="warn" (click)="liquidarAgora()">
+      <mat-icon>flash_on</mat-icon>
+      Liquidar agora (dev)
+    </button>
+  </div>
+
+  <!-- Tabela de liquidações -->
+  <mat-card>
+    <mat-card-content>
+      @if (!lojaId) {
+        <p class="vazio">Selecione uma loja para ver as liquidações.</p>
+      } @else if (liquidacoes.length) {
+        <table mat-table [dataSource]="liquidacoes" class="full-width">
+
+          <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef>Data</th>
+            <td mat-cell *matCellDef="let l">{{ l.dataReferencia | date:'dd/MM/yyyy' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="entregas">
+            <th mat-header-cell *matHeaderCellDef>Entregas</th>
+            <td mat-cell *matCellDef="let l">{{ l.totalEntregas }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="bruto">
+            <th mat-header-cell *matHeaderCellDef>Valor bruto</th>
+            <td mat-cell *matCellDef="let l">R$ {{ l.valorBruto | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="taxas">
+            <th mat-header-cell *matHeaderCellDef>Taxas</th>
+            <td mat-cell *matCellDef="let l">R$ {{ l.totalTaxas | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="liquido">
+            <th mat-header-cell *matHeaderCellDef>Valor líquido</th>
+            <td mat-cell *matCellDef="let l" class="valor-liquido">
+              R$ {{ l.valorLiquido | number:'1.2-2' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let l">
+              <span class="status-badge" [ngClass]="'status-' + l.status">
+                {{ l.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+          <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+
+          <!-- Footer row com totais -->
+          <ng-container matColumnDef="footer-label">
+            <td mat-footer-cell *matFooterCellDef><strong>Total</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="footer-entregas">
+            <td mat-footer-cell *matFooterCellDef><strong>{{ totalEntregas }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="footer-bruto">
+            <td mat-footer-cell *matFooterCellDef><strong>R$ {{ totalBruto | number:'1.2-2' }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="footer-taxas">
+            <td mat-footer-cell *matFooterCellDef><strong>R$ {{ totalTaxas | number:'1.2-2' }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="footer-liquido">
+            <td mat-footer-cell *matFooterCellDef class="valor-liquido">
+              <strong>R$ {{ totalLiquido | number:'1.2-2' }}</strong>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="footer-empty">
+            <td mat-footer-cell *matFooterCellDef></td>
+          </ng-container>
+
+          <tr mat-footer-row *matFooterRowDef="colunasFooter"></tr>
+        </table>
+      } @else {
+        <p class="vazio">Nenhuma liquidação encontrada para esta loja.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+

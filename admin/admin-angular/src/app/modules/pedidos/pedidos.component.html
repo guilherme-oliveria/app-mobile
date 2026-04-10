@@ -1,0 +1,85 @@
+<div class="page">
+  <!-- Header -->
+  <div class="header">
+    <h1>Pedidos</h1>
+    <mat-form-field appearance="outline" class="filtro-select">
+      <mat-label>Filtrar por status</mat-label>
+      <mat-select [(value)]="filtroStatus" (selectionChange)="filtrar()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="AGUARDANDO_ACEITE">Aguardando aceite</mat-option>
+        <mat-option value="ACEITO">Aceito</mat-option>
+        <mat-option value="COLETADO">Coletado</mat-option>
+        <mat-option value="EM_ENTREGA">Em entrega</mat-option>
+        <mat-option value="ENTREGUE">Entregue</mat-option>
+        <mat-option value="CANCELADO">Cancelado</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Tabela -->
+  <mat-card>
+    <mat-card-content>
+      @if (pedidosFiltrados.length) {
+        <table mat-table [dataSource]="pedidosFiltrados" class="full-width">
+
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let p">{{ p.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="loja">
+            <th mat-header-cell *matHeaderCellDef>Loja</th>
+            <td mat-cell *matCellDef="let p">{{ p.lojaNome }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let p">{{ p.clienteNome }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="endereco">
+            <th mat-header-cell *matHeaderCellDef>Endereço</th>
+            <td mat-cell *matCellDef="let p">{{ p.enderecoEntrega }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef>Valor</th>
+            <td mat-cell *matCellDef="let p">R$ {{ p.valorTotal | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="status-badge" [ngClass]="'status-' + p.status">
+                {{ labelStatus(p.status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef>Data</th>
+            <td mat-cell *matCellDef="let p">{{ p.criadoEm | date:'dd/MM/yy HH:mm' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let p">
+              @if (p.status === 'AGUARDANDO_ACEITE') {
+                <button mat-stroked-button color="primary" (click)="criarEntrega(p.id)">
+                  <mat-icon>add_circle_outline</mat-icon>
+                  Criar entrega
+                </button>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+          <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+        </table>
+      } @else {
+        <p class="vazio">Nenhum pedido encontrado.</p>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+

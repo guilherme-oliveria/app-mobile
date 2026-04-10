@@ -1,0 +1,37 @@
+package com.delivery.auth.entity;
+
+import com.delivery.shared.Enums.RoleUsuario;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "usuarios")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String senha;
+
+    @Column(nullable = false)
+    private String nome;
+
+    @Enumerated(EnumType.STRING)
+    private RoleUsuario role;
+
+    // referencia para loja ou motoboy dependendo do role
+    @Column(name = "ref_id")
+    private Long refId;
+
+    private boolean ativo = true;
+
+    @Column(name = "criado_em")
+    private LocalDateTime criadoEm = LocalDateTime.now();
+}

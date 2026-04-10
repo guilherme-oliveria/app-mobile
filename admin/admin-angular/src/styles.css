@@ -1,0 +1,55 @@
+/* ====== Reset e globais ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: Roboto, 'Segoe UI', sans-serif;
+  background-color: #fafafa;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ====== Custom theme tokens (M3 — Angular Material 21) ====== */
+:root {
+  --primary: #FF6B00;
+  --primary-dark: #e55d00;
+  --accent: #1a1a2e;
+
+  /* M3 tokens override para cor primária laranja */
+  --mat-sys-primary: #FF6B00;
+  --mat-sys-on-primary: #fff;
+  --mat-sys-primary-container: #ffdbca;
+  --mat-sys-on-primary-container: #331200;
+}
+
+/* Badge de status genérico */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-AGUARDANDO_ACEITE { background: #fef3c7; color: #92400e; }
+.status-ACEITO            { background: #dbeafe; color: #1e40af; }
+.status-COLETADO          { background: #ffedd5; color: #9a3412; }
+.status-EM_ENTREGA        { background: #fce7f3; color: #9d174d; }
+.status-ENTREGUE          { background: #dcfce7; color: #166534; }
+.status-CANCELADO         { background: #fee2e2; color: #991b1b; }
+.status-DISPONIVEL        { background: #dcfce7; color: #166534; }
+.status-INATIVO           { background: #f3f4f6; color: #6b7280; }
+.status-PROCESSADA        { background: #dcfce7; color: #166534; }
+.status-PENDENTE          { background: #fef3c7; color: #92400e; }
+.status-FALHA             { background: #fee2e2; color: #991b1b; }
+.status-ativo             { background: #dcfce7; color: #166534; }
+.status-inativo           { background: #fee2e2; color: #991b1b; }

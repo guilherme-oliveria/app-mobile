@@ -1,0 +1,43 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <div class="logo">
+      <mat-icon class="logo-icon">local_shipping</mat-icon>
+      <h1>Delivery Admin</h1>
+      <p>Painel administrativo</p>
+    </div>
+
+    <form (ngSubmit)="login()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [(ngModel)]="email" name="email"
+               placeholder="admin@delivery.com" required>
+        <mat-icon matPrefix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Senha</mat-label>
+        <input matInput [type]="ocultarSenha ? 'password' : 'text'"
+               [(ngModel)]="senha" name="senha" required>
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button"
+                (click)="ocultarSenha = !ocultarSenha">
+          <mat-icon>{{ ocultarSenha ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      @if (erro) {
+        <p class="erro">{{ erro }}</p>
+      }
+
+      <button mat-raised-button color="primary" type="submit"
+              class="full-width btn-login" [disabled]="carregando">
+        @if (carregando) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Entrar
+        }
+      </button>
+    </form>
+  </mat-card>
+</div>
+

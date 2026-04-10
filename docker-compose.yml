@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+
+  # =============================================
+  # INFRAESTRUTURA
+  # =============================================
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: delivery_postgres
+    environment:
+      POSTGRES_DB: delivery_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: delivery_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: delivery_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # painel web: http://localhost:15672 (guest/guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================
+  # BACKEND — Java 21 + Spring Boot
+  # =============================================
+  # Build:  docker compose build backend
+  # Rodar:  docker compose up backend
+  # Logs:   docker compose logs -f backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: delivery_backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Dentro do Docker, os hosts são os nomes dos services
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/delivery_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # =============================================
+  # ADMIN — Angular 21 + Nginx
+  # =============================================
+  # Build:  docker compose build admin
+  # Rodar:  docker compose up admin
+  # Acesso: http://localhost:4200
+
+  admin:
+    build:
+      context: ./admin/admin-angular
+      dockerfile: Dockerfile
+    container_name: delivery_admin
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+  # =============================================
+  # FLUTTER — Gerar APKs (motoboy_app + store_app)
+  # =============================================
+  # Uso:    docker compose run --rm flutter-builder
+  # Output: os APKs ficam em ./mobile/apk-output/
+  #
+  # Este container NÃO fica rodando — só builda e para.
+
+  flutter-builder:
+    build:
+      context: ./mobile
+      dockerfile: Dockerfile
+    container_name: delivery_flutter_builder
+    volumes:
+      - ./mobile/apk-output:/output-host
+    entrypoint: >
+      sh -c "cp /output/*.apk /output-host/ && echo '✅ APKs copiados para mobile/apk-output/'"
+    profiles:
+      - build
+
+volumes:
+  postgres_data:

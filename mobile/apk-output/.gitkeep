@@ -1,0 +1,3 @@
+# Pasta onde os APKs gerados pelo Docker ficam
+# Uso: docker compose --profile build run --rm flutter-builder
+
