@@ -95,7 +95,7 @@ DISPONIVEL ◄──────────► EM_ENTREGA
 | `INATIVO` | Desativado pelo admin | Admin desativa manualmente |
 
 ### Transições automáticas
-- `DISPONIVEL → EM_ENTREGA`: quando admin atribui entrega → `EntregaService.atribuirMotoboy()`
+- `DISPONIVEL → EM_ENTREGA`: quando motoboy aceita (`aceitarEntrega()`) ou admin atribui (`atribuirMotoboy()`)
 - `EM_ENTREGA → DISPONIVEL`: quando motoboy finaliza entrega → `EntregaService.finalizarEntrega()`
 
 ### Enum no backend

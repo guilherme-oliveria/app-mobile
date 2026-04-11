@@ -12,7 +12,7 @@
 ├────────────────────┤       ├─────────────────────┤
 │ id (PK)            │       │ id (PK)             │
 │ email (UNIQUE)     │  ref  │ nome                │
-│ senha (BCrypt)     │──────►│ cnpj (UNIQUE)       │
+│ senha (AES-256)    │──────►│ cnpj (UNIQUE)       │
 │ nome               │       │ email (UNIQUE)      │
 │ role (ENUM)        │       │ telefone            │
 │ ref_id ────────────┤       │ endereco            │
@@ -105,9 +105,9 @@ Login unificado. `role` define permissões. `ref_id` vincula à entidade (loja o
 |--------|------|-----------|-----------|
 | id | BIGINT | PK, AUTO_INCREMENT | — |
 | email | VARCHAR | UNIQUE, NOT NULL | Login |
-| senha | VARCHAR | NOT NULL | Hash BCrypt |
+| senha | VARCHAR | NOT NULL | AES-256-GCM (encriptada com passphrase) |
 | nome | VARCHAR | NOT NULL | — |
-| role | VARCHAR (ENUM) | — | ADMIN, LOJA, MOTOBOY |
+| role | VARCHAR (ENUM) | — | ADMIN, SUPORTE, LOJA, MOTOBOY |
 | ref_id | BIGINT | — | FK lógica para lojas ou motoboys |
 | ativo | BOOLEAN | default true | — |
 | criado_em | TIMESTAMP | — | — |

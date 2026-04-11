@@ -11,15 +11,23 @@
 | Estrutura monorepo | ✅ Pronto | backend + admin + mobile |
 | Docker Compose | ✅ Pronto | PostgreSQL 17 + Redis 7 + RabbitMQ 3 |
 | Backend Spring Boot | ✅ Pronto | Auth, Pedido, Entrega, Pagamento, Motoboy, Loja |
-| Flyway migrations | ✅ Configurado | `db/migration/` |
-| Spring Security + JWT | ✅ Pronto | Login unificado + RBAC por role |
+| Flyway migrations | ✅ Pronto | V1 (tabelas) + V2 (admin) + V3 (suporte) |
+| Spring Security + JWT | ✅ Pronto | Login unificado + RBAC (ADMIN, SUPORTE, LOJA, MOTOBOY) |
+| Criptografia AES-256-GCM | ✅ Pronto | Senhas encriptadas no banco com passphrase reversível |
 | Admin Angular 21 | ✅ Pronto | Dashboard, Pedidos, Motoboys, Lojas, Relatórios |
 | Angular Material | ✅ Pronto | Todas as telas com Material components |
-| Flutter motoboy_app | ✅ Pronto | Login, Home, Entrega Ativa (com diálogo de pagamento) |
+| Flutter motoboy_app | ✅ Pronto | Login, Home (tabs Disponíveis/Minhas), Entrega Ativa |
 | Flutter store_app | ✅ Pronto | Login, Pedidos (tabs Ativos/Todos) |
-| WebSocket (STOMP) | ✅ Configurado | Tempo real no dashboard |
+| WebSocket (STOMP) | ✅ Pronto | Tempo real no dashboard admin |
+| RabbitMQ consumers | ✅ Pronto | 4 consumers: push FCM, entrega criada/aceita, status |
+| Modelo híbrido de atribuição | ✅ Pronto | Auto-atribuição por motoboy + intervenção do admin |
+| Optimistic locking | ✅ Pronto | `@Version` na entrega → evita race condition entre motoboys |
+| Timeout de entregas | ✅ Pronto | Job agendado a cada 2min → alerta admin se sem aceite há 10min |
+| GlobalExceptionHandler | ✅ Pronto | Trata 409 (optimistic lock), 422 (negócio), 404 (não encontrado) |
+| Perfil SUPORTE | ✅ Pronto | Acesso operacional sem permissões financeiras/exclusão |
+| Debug remoto (Docker) | ✅ Pronto | Backend JDWP:5005 + Angular source maps |
 | Dockerfiles multi-stage | ✅ Pronto | Backend, Admin, Mobile |
-| Documentação | ✅ Completa | INSTRUCTIONS.md + README + /projeto |
+| Documentação | ✅ Completa | INSTRUCTIONS.md + README + /projeto (13 documentos) |
 
 ---
 
@@ -29,23 +37,19 @@
 
 | Item | Onde mexer | Por quê |
 |------|-----------|---------|
-| Implementar modelo híbrido de atribuição | `EntregaService`, `EntregaController`, `home_screen.dart` | Motoboy aceita sozinho + admin intervém. Ver [13-modelo-atribuicao-entregas.md](./13-modelo-atribuicao-entregas.md) |
 | Automatizar criação de `Usuario` ao cadastrar loja/motoboy | `LojaService.criar()` e `MotoboyService.criar()` | Hoje admin precisa criar manualmente no banco |
 | Implementar chamadas reais ao Pagar.me (tirar stubs) | `PagarmeService.java` (3 métodos com TODO) | Sem isso, não processa pagamento real |
 | Integrar SDK Stone Smart POS no Flutter | `entrega_ativa_screen.dart` (linha com TODO) | Sem isso, não cobra na maquininha |
 | Configurar Firebase FCM | `google-services.json` + `firebase-credentials.json` | Sem isso, sem push notifications |
-| Flyway migration V1 | `backend/src/main/resources/db/migration/V1__create_tables.sql` | Script SQL com todas as tabelas |
 
 ### 🟡 Prioridade Média
 
 | Item | Onde mexer | Por quê |
 |------|-----------|---------|
-| RabbitMQ listeners | Criar `@RabbitListener` classes | Hoje as filas existem mas não são consumidas |
 | Testes automatizados | JUnit + Mockito + WebMvcTest | Qualidade de código |
 | Webhook Pagar.me | Novo endpoint `POST /api/webhooks/pagarme` | Confirmação assíncrona de pagamento |
 | Tela de criação de pedidos no store_app | `store_app/lib/screens/novo_pedido_screen.dart` | Hoje só lista pedidos |
 | Validações de formulário (frontend) | Todos os componentes com form | Validar CNPJ, CPF, email, etc. |
-| Tratamento de erros global | `@ControllerAdvice` no backend + interceptor Angular | Mensagens amigáveis |
 
 ### 🟢 Prioridade Baixa (melhorias)
 
@@ -62,14 +66,58 @@
 
 ---
 
+## 📱 Distribuição Mobile
+
+### Android (.APK) — ✅ Pronto (Windows/Linux/Mac)
+
+```bash
+# Gera APKs de ambos os apps via Docker
+docker compose --profile build run --rm flutter-builder
+
+# Output: mobile/apk-output/
+#   ├── motoboy_app.apk
+#   └── store_app.apk
+```
+
+**Distribuir via:** Play Store (oficial) ou link direto para download.
+
+### iOS (.IPA) — ⏳ Requer Mac
+
+**Mesmo código Flutter**, muda apenas a plataforma de build:
+
+```bash
+# No Mac, dentro da pasta mobile/motoboy_app:
+flutter build ios --release
+
+# Gera: build/ios/ipa/motoboy_app.ipa
+```
+
+| | Android | iOS |
+|---|---|---|
+| Plataforma build | ✅ Windows/Linux/Docker | ❌ **Só Mac + Xcode** |
+| Arquivo gerado | `.apk` | `.ipa` |
+| Código Flutter | ✅ **100% reutilizável** | ✅ **100% reutilizável** |
+| Custo publicação | $25 (única vez — Play Store) | $99/ano (Apple Developer) |
+
+---
+
 ## Checklist pré-produção
 
 ```
+[x] Flyway migrations versionadas (V1 tabelas + V2 admin + V3 suporte)
+[x] GlobalExceptionHandler com tratamento de 409/422/404/500
+[x] Modelo híbrido de atribuição com optimistic locking
+[x] RabbitMQ consumers para FCM, WebSocket, entregas
+[x] Timeout de entregas sem aceite (job agendado)
+[x] Perfil SUPORTE com permissões restritas
+[x] Debug remoto habilitado (JDWP:5005 + source maps Angular)
 [ ] Trocar jwt.secret para uma chave forte (min 256 bits)
 [ ] Trocar credenciais do banco (não usar postgres/postgres)
+[ ] Trocar crypto.passphrase via variável de ambiente segura
 [ ] Configurar HTTPS (SSL/TLS) no backend
 [ ] Configurar CORS para domínio real (não localhost)
-[ ] Criar migration V1 com Flyway (não usar ddl-auto=update)
+[ ] Remover debug remoto do backend (Dockerfile ENTRYPOINT + porta 5005)
+[ ] Remover source maps do Angular (Dockerfile: --configuration production)
 [ ] Remover botão "Liquidar agora" ou proteger em produção
 [ ] Configurar backup automático do PostgreSQL
 [ ] Configurar monitoramento (Spring Actuator + Prometheus/Grafana)
@@ -77,6 +125,7 @@
 [ ] Consultar advogado sobre contratos (loja + motoboy)
 [ ] Obter CNPJ com CNAEs corretos
 [ ] Configurar conta Pagar.me de produção
+[ ] Configurar Firebase FCM (google-services.json + firebase-credentials.json)
 ```
 
 ---

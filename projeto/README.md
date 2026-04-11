@@ -21,6 +21,7 @@
 | 10 | [Fluxo Financeiro](10-fluxo-financeiro.md) | Da cobrança na maquininha até a liquidação na conta da loja |
 | 11 | [Resumo Financeiro](11-resumo-financeiro.md) | Receita, custos, simulações e comparação com concorrentes |
 | 12 | [Pendências e Roadmap](12-pendencias-roadmap.md) | O que está pronto, o que falta, checklist pré-produção |
+| 13 | [Modelo de Atribuição](13-modelo-atribuicao-entregas.md) | ✅ Modelo híbrido: auto-atribuição motoboy + intervenção admin |
 
 ---
 

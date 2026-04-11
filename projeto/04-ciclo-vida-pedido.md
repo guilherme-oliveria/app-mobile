@@ -114,64 +114,56 @@
 
 ## Código de referência
 
-### Backend — EntregaService.java
+### Backend — EntregaService.java (✅ Implementado)
 
 ```java
-// Criar entrega automaticamente quando loja cria pedido
+// Criar entrega → publica evento no RabbitMQ (FCM + WebSocket em background)
+@Transactional
 public Entrega criarParaPedido(Long pedidoId) {
     var pedido = pedidoService.buscarEntidade(pedidoId);
     var entrega = entregaRepository.save(Entrega.builder()
             .pedido(pedido).status(DISPONIVEL).build());
-    // Notifica todos os motoboys disponíveis via FCM
-    // fcmService.notificarEntregaDisponivel(entrega);
+    // Publica evento na fila — consumers notificam motoboys + admin
+    eventPublisher.publicarEntregaCriada(...);
     return entrega;
 }
 
-// Motoboy aceita entrega (auto-atribuição)
+// Motoboy aceita entrega (auto-atribuição com optimistic locking)
 @Transactional
 public Entrega aceitarEntrega(Long entregaId) {
     var entrega = buscarEntidade(entregaId);
-    if (entrega.getStatus() != DISPONIVEL) {
-        throw new BusinessException("Entrega já foi aceita por outro motoboy");
-    }
-    var motoboyId = SecurityUtils.getRefIdFromToken();
+    if (entrega.getStatus() != DISPONIVEL) throw ...;
+    var motoboyId = securityUtils.getRefIdDoUsuarioLogado();
     var motoboy = motoboyService.buscarEntidade(motoboyId);
-    if (motoboy.getStatus() != DISPONIVEL) {
-        throw new BusinessException("Você já está em uma entrega");
-    }
-    entrega.setMotoboy(motoboy);
-    entrega.setStatus(ATRIBUIDA);
-    motoboyService.atualizarStatus(motoboyId, EM_ENTREGA);
-    pedidoService.atualizarStatus(entrega.getPedido().getId(), ACEITO);
-    return entregaRepository.save(entrega);
+    if (motoboy.getStatus() != DISPONIVEL) throw ...;
+    atribuirEntrega(entrega, motoboy);  // @Version protege de aceite duplo
+    eventPublisher.publicarEntregaAceita(..., autoAceite=true);
+    return entrega;
 }
 
 // Admin atribui motoboy manualmente (intervenção)
+@Transactional
 public Entrega atribuirMotoboy(Long entregaId, Long motoboyId) {
     var entrega = buscarEntidade(entregaId);
+    if (entrega.getStatus() != DISPONIVEL) throw ...;
     var motoboy = motoboyService.buscarEntidade(motoboyId);
+    if (motoboy.getStatus() != DISPONIVEL) throw ...;
+    atribuirEntrega(entrega, motoboy);
+    eventPublisher.publicarEntregaAceita(..., autoAceite=false);
+    return entrega;
+}
+
+// Lógica compartilhada de atribuição
+private void atribuirEntrega(Entrega entrega, Motoboy motoboy) {
     entrega.setMotoboy(motoboy);
     entrega.setStatus(ATRIBUIDA);
-    motoboyService.atualizarStatus(motoboyId, EM_ENTREGA);
+    motoboyService.atualizarStatus(motoboy.getId(), EM_ENTREGA);
     pedidoService.atualizarStatus(entrega.getPedido().getId(), ACEITO);
-    return entregaRepository.save(entrega);
+    entregaRepository.save(entrega);
 }
 
-// Confirmar coleta
-public Entrega confirmarColeta(Long entregaId) {
-    var entrega = buscarEntidade(entregaId);
-    entrega.setStatus(COLETADA);
-    pedidoService.atualizarStatus(entrega.getPedido().getId(), COLETADO);
-    return entregaRepository.save(entrega);
-}
-
-// Finalizar entrega
-public Entrega finalizarEntrega(Long entregaId, String codigo) {
-    var entrega = buscarEntidade(entregaId);
-    entrega.setStatus(FINALIZADA);
-    pedidoService.atualizarStatus(entrega.getPedido().getId(), ENTREGUE);
-    motoboyService.atualizarStatus(entrega.getMotoboy().getId(), DISPONIVEL);
-    return entregaRepository.save(entrega);
-}
+// Job: alerta admin se entrega sem aceite há mais de 10 minutos
+@Scheduled(fixedRate = 120_000)
+public void verificarEntregasSemAceite() { ... }
 ```
 

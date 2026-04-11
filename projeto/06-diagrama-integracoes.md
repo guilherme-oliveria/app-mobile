@@ -75,7 +75,8 @@ POST /orders
 
 | Quando | Para quem | Mensagem |
 |--------|-----------|----------|
-| Entrega atribuída | Motoboy | "Nova entrega atribuída! Vá até a loja X" |
+| Entrega criada (DISPONIVEL) | TODOS motoboys disponíveis | "🔔 Nova entrega disponível! Loja X → Rua Y" |
+| Admin atribui motoboy | Motoboy atribuído | "📦 Entrega atribuída a você! Cliente: Z" |
 | Coleta confirmada | Loja | "Motoboy coletou o pedido #42" |
 | Entrega finalizada | Loja | "Pedido #42 entregue ao cliente" |
 
@@ -91,9 +92,11 @@ POST /orders
 
 | Fila | Produtor | Consumidor | Cenário |
 |------|----------|------------|---------|
-| `fila.entrega` | Quando entrega é criada | Listener que notifica motoboys próximos | Desacopla criação da notificação |
-| `fila.notificacao` | Qualquer mudança de status | Listener que dispara FCM push | Evita atrasar a resposta HTTP |
-| `fila.pagamento` | Quando maquininha aprova | Listener que registra transação + liquida | Processamento assíncrono |
+| `fila.notificacao` | Qualquer mudança de status | `EventConsumers.processarNotificacaoPush()` | Push FCM individual para motoboy |
+| `fila.entrega.criada` | Quando entrega é criada | `EventConsumers.processarEntregaCriada()` | Notifica todos motoboys disponíveis + dashboard admin |
+| `fila.entrega.aceita` | Motoboy aceita ou admin atribui | `EventConsumers.processarEntregaAceita()` | Atualiza dashboard + notifica motoboy (se admin atribuiu) |
+| `fila.entrega.status` | Coleta, finalização, cancelamento | `EventConsumers.processarStatusAlterado()` | Atualiza dashboard admin em tempo real |
+| `fila.pagamento` | Quando maquininha aprova | Listener que registra transação | Processamento assíncrono |
 
 **Por que RabbitMQ?**
 - Se o Firebase ou Pagar.me estiver fora, a mensagem fica na fila e é processada depois
@@ -126,7 +129,7 @@ POST /orders
 |-----------|---------|--------|
 | Pagar.me | `PagarmeService.java` | 🟡 Stub — métodos retornam IDs fake |
 | Firebase FCM | `FirebaseNotificacaoService.java` | 🟡 Precisa configurar credentials |
-| RabbitMQ | Docker compose + `application.properties` | ✅ Infra pronta, listeners pendentes |
+| RabbitMQ | `EventConsumers.java` + `EntregaEventPublisher.java` | ✅ 4 consumers implementados |
 | Redis | Docker compose + Spring Data Redis | ✅ Infra pronta |
-| WebSocket | `WebSocketConfig.java` | ✅ Configurado |
+| WebSocket | `WebSocketConfig.java` | ✅ Configurado e funcionando |
 

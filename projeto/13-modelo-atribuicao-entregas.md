@@ -1,6 +1,7 @@
 # 13 — Modelo de Atribuição de Entregas: Admin vs Auto-Atribuição
 
-> Análise completa de quem atribui o motoboy à entrega e recomendação final.
+> ✅ **IMPLEMENTADO** — Modelo Híbrido (C) totalmente funcional.
+> Análise completa de quem atribui o motoboy à entrega.
 
 ---
 
@@ -126,9 +127,11 @@
 
 ---
 
-## Mudanças necessárias no projeto
+## ✅ Implementação atual no projeto
 
-### 1. Novo status de Entrega: `DISPONIVEL`
+> Todas as mudanças abaixo já estão implementadas e funcionando.
+
+### 1. Status de Entrega: `DISPONIVEL` (✅ Implementado)
 
 ```java
 public enum StatusEntrega {
@@ -142,7 +145,7 @@ public enum StatusEntrega {
 
 > `PENDENTE` → `DISPONIVEL` = a entrega está visível para todos os motoboys aceitarem.
 
-### 2. Novo endpoint: Motoboy aceita entrega
+### 2. Endpoint: Motoboy aceita entrega (✅ Implementado)
 
 ```java
 // EntregaController.java
@@ -153,7 +156,7 @@ public ResponseEntity<EntregaDTO> aceitarEntrega(@PathVariable Long id) {
 }
 ```
 
-### 3. Lógica com lock otimista (evitar race condition)
+### 3. Lógica com lock otimista — race condition resolvida (✅ Implementado)
 
 ```java
 // EntregaService.java
@@ -186,7 +189,7 @@ public EntregaDTO aceitarEntrega(Long entregaId) {
 }
 ```
 
-### 4. Novo endpoint: Listar entregas disponíveis (para o app do motoboy)
+### 4. Endpoint: Listar entregas disponíveis (✅ Implementado)
 
 ```java
 // EntregaController.java
@@ -197,7 +200,7 @@ public ResponseEntity<List<EntregaDTO>> listarDisponiveis() {
 }
 ```
 
-### 5. Motoboy App (Flutter) — Nova tela de entregas disponíveis
+### 5. Motoboy App (Flutter) — Tela de entregas disponíveis (✅ Implementado)
 
 ```dart
 // home_screen.dart — ao invés de só ver "entrega atribuída", motoboy vê lista
@@ -205,7 +208,7 @@ public ResponseEntity<List<EntregaDTO>> listarDisponiveis() {
 // Botão "ACEITAR" → POST /api/entregas/{id}/aceitar
 ```
 
-### 6. Dashboard Admin — Visão e intervenção
+### 6. Dashboard Admin — Visão e intervenção (✅ Implementado)
 
 O dashboard continua mostrando entregas pendentes, mas agora:
 - Mostra entregas `DISPONIVEL` que ninguém aceitou ainda
