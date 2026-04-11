@@ -17,18 +17,27 @@
       <mat-card-content>
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Nome</mat-label>
-            <input matInput [(ngModel)]="nova.nome" placeholder="Nome da loja">
+            <mat-label>Nome *</mat-label>
+            <input matInput [(ngModel)]="nova.nome" placeholder="Nome da loja" required #nomeField="ngModel">
+            @if (nomeField.invalid && nomeField.touched) {
+              <mat-error>Nome é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>CNPJ</mat-label>
-            <input matInput [(ngModel)]="nova.cnpj" placeholder="00.000.000/0000-00">
+            <mat-label>CNPJ *</mat-label>
+            <input matInput [(ngModel)]="nova.cnpj" placeholder="00.000.000/0000-00" required #cnpjField="ngModel">
+            @if (cnpjField.invalid && cnpjField.touched) {
+              <mat-error>CNPJ é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" [(ngModel)]="nova.email" placeholder="loja@exemplo.com">
+            <mat-label>Email *</mat-label>
+            <input matInput type="email" [(ngModel)]="nova.email" placeholder="loja@exemplo.com" required #emailField="ngModel">
+            @if (emailField.invalid && emailField.touched) {
+              <mat-error>Email é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -47,9 +56,19 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Senha de acesso</mat-label>
+            <mat-label>Senha de acesso *</mat-label>
             <input matInput type="password" [(ngModel)]="nova.senhaInicial"
-                   placeholder="Senha para login no app">
+                   placeholder="Senha para login no app" required minlength="6"
+                   #senhaField="ngModel">
+            @if (senhaField.invalid && senhaField.touched) {
+              <mat-error>
+                @if (senhaField.errors?.['required']) {
+                  Senha é obrigatória
+                } @else if (senhaField.errors?.['minlength']) {
+                  Mínimo 6 caracteres
+                }
+              </mat-error>
+            }
             <mat-hint>Mínimo 6 caracteres — loja poderá trocar no primeiro login</mat-hint>
           </mat-form-field>
         </div>

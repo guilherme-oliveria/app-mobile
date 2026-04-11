@@ -17,18 +17,27 @@
       <mat-card-content>
         <div class="form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Nome</mat-label>
-            <input matInput [(ngModel)]="novo.nome" placeholder="Nome completo">
+            <mat-label>Nome *</mat-label>
+            <input matInput [(ngModel)]="novo.nome" placeholder="Nome completo" required #nomeField="ngModel">
+            @if (nomeField.invalid && nomeField.touched) {
+              <mat-error>Nome é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>CPF</mat-label>
-            <input matInput [(ngModel)]="novo.cpf" placeholder="000.000.000-00">
+            <mat-label>CPF *</mat-label>
+            <input matInput [(ngModel)]="novo.cpf" placeholder="000.000.000-00" required #cpfField="ngModel">
+            @if (cpfField.invalid && cpfField.touched) {
+              <mat-error>CPF é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" [(ngModel)]="novo.email" placeholder="email@exemplo.com">
+            <mat-label>Email *</mat-label>
+            <input matInput type="email" [(ngModel)]="novo.email" placeholder="email@exemplo.com" required #emailField="ngModel">
+            @if (emailField.invalid && emailField.touched) {
+              <mat-error>Email é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -47,9 +56,19 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Senha de acesso</mat-label>
+            <mat-label>Senha de acesso *</mat-label>
             <input matInput type="password" [(ngModel)]="novo.senhaInicial"
-                   placeholder="Senha para login no app">
+                   placeholder="Senha para login no app" required minlength="6"
+                   #senhaField="ngModel">
+            @if (senhaField.invalid && senhaField.touched) {
+              <mat-error>
+                @if (senhaField.errors?.['required']) {
+                  Senha é obrigatória
+                } @else if (senhaField.errors?.['minlength']) {
+                  Mínimo 6 caracteres
+                }
+              </mat-error>
+            }
             <mat-hint>Mínimo 6 caracteres — motoboy poderá trocar no primeiro login</mat-hint>
           </mat-form-field>
         </div>

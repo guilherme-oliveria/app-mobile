@@ -102,3 +102,20 @@ a {
 .status-FALHA             { background: #fee2e2; color: #991b1b; }
 .status-ativo             { background: #dcfce7; color: #166534; }
 .status-inativo           { background: #fee2e2; color: #991b1b; }
+
+/* ====== Snackbar de erro / sucesso ====== */
+.snackbar-erro .mdc-snackbar__surface {
+  background-color: #d32f2f !important;
+  color: #fff !important;
+}
+.snackbar-erro .mat-mdc-button.mat-mdc-snack-bar-action {
+  color: #ffcdd2 !important;
+}
+
+.snackbar-sucesso .mdc-snackbar__surface {
+  background-color: #2e7d32 !important;
+  color: #fff !important;
+}
+.snackbar-sucesso .mat-mdc-button.mat-mdc-snack-bar-action {
+  color: #c8e6c9 !important;
+}

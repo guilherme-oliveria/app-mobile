@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Motoboy } from '../../shared/models/models';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -24,6 +25,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class MotoboysComponent implements OnInit {
 
   private readonly api = inject(ApiService);
+  private readonly snackBar = inject(MatSnackBar);
   readonly auth = inject(AuthService);
 
   motoboys: Motoboy[] = [];
@@ -40,27 +42,49 @@ export class MotoboysComponent implements OnInit {
   }
 
   carregar(): void {
-    this.api.getMotoboys().subscribe(m => this.motoboys = m);
+    this.api.getMotoboys().subscribe({
+      next: m => this.motoboys = m,
+      error: () => {} // interceptor já mostra snackbar
+    });
   }
 
   criar(): void {
     if (!this.novo.nome || !this.novo.cpf || !this.novo.email || !this.novo.senhaInicial) {
-      alert('Preencha nome, CPF, email e senha de acesso.');
+      this.snackBar.open('Preencha nome, CPF, email e senha de acesso.', 'Fechar', {
+        duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+      });
       return;
     }
     if (this.novo.senhaInicial!.length < 6) {
-      alert('A senha deve ter no mínimo 6 caracteres.');
+      this.snackBar.open('A senha deve ter no mínimo 6 caracteres.', 'Fechar', {
+        duration: 5000, horizontalPosition: 'center', verticalPosition: 'top'
+      });
       return;
     }
-    this.api.criarMotoboy(this.novo).subscribe(() => {
-      this.novo = {};
-      this.mostrarForm = false;
-      this.carregar();
+    this.api.criarMotoboy(this.novo).subscribe({
+      next: () => {
+        this.snackBar.open('Motoboy cadastrado com sucesso!', 'Fechar', {
+          duration: 4000, horizontalPosition: 'center', verticalPosition: 'top',
+          panelClass: ['snackbar-sucesso']
+        });
+        this.novo = {};
+        this.mostrarForm = false;
+        this.carregar();
+      },
+      error: () => {} // interceptor já mostra snackbar com detalhe do erro
     });
   }
 
   inativar(id: number): void {
-    if (!confirm('Deseja inativar este motoboy? Ele perdera o acesso a plataforma.')) return;
-    this.api.inativarMotoboy(id).subscribe(() => this.carregar());
+    if (!confirm('Deseja inativar este motoboy? Ele perderá o acesso à plataforma.')) return;
+    this.api.inativarMotoboy(id).subscribe({
+      next: () => {
+        this.snackBar.open('Motoboy inativado.', 'Fechar', {
+          duration: 4000, horizontalPosition: 'center', verticalPosition: 'top'
+        });
+        this.carregar();
+      },
+      error: () => {} // interceptor já mostra snackbar
+    });
   }
 }

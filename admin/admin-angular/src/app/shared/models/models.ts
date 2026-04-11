@@ -1,5 +1,19 @@
 // src/app/shared/models/models.ts
 
+// ── Resposta de erro padronizada do backend ─────────────────
+export interface ErrorResponse {
+  status: number;
+  erro: string;
+  mensagem: string;
+  campos?: CampoErro[];
+  timestamp: string;
+}
+
+export interface CampoErro {
+  campo: string;
+  mensagem: string;
+}
+
 export interface Loja {
   id: number;
   nome: string;
