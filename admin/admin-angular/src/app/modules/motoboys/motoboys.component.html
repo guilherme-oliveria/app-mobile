@@ -45,6 +45,13 @@
             <mat-label>Serial Smart POS</mat-label>
             <input matInput [(ngModel)]="novo.smartPosSerial" placeholder="Serial da maquininha">
           </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Senha de acesso</mat-label>
+            <input matInput type="password" [(ngModel)]="novo.senhaInicial"
+                   placeholder="Senha para login no app">
+            <mat-hint>Mínimo 6 caracteres — motoboy poderá trocar no primeiro login</mat-hint>
+          </mat-form-field>
         </div>
       </mat-card-content>
       <mat-card-actions align="end">

@@ -11,9 +11,11 @@
 | Estrutura monorepo | ✅ Pronto | backend + admin + mobile |
 | Docker Compose | ✅ Pronto | PostgreSQL 17 + Redis 7 + RabbitMQ 3 |
 | Backend Spring Boot | ✅ Pronto | Auth, Pedido, Entrega, Pagamento, Motoboy, Loja |
-| Flyway migrations | ✅ Pronto | V1 (tabelas) + V2 (admin) + V3 (suporte) |
+| Flyway migrations | ✅ Pronto | V1 (tabelas) + V2 (admin) + V3 (suporte) + V4 (deve_alterar_senha) |
 | Spring Security + JWT | ✅ Pronto | Login unificado + RBAC (ADMIN, SUPORTE, LOJA, MOTOBOY) |
 | Criptografia AES-256-GCM | ✅ Pronto | Senhas encriptadas no banco com passphrase reversível |
+| Criação automática de Usuário | ✅ Pronto | LojaService/MotoboyService criam Usuario + senha ao cadastrar |
+| Troca de senha (apps mobile) | ✅ Pronto | Tela obrigatória no 1º login + menu "Trocar Senha" |
 | Admin Angular 21 | ✅ Pronto | Dashboard, Pedidos, Motoboys, Lojas, Relatórios |
 | Angular Material | ✅ Pronto | Todas as telas com Material components |
 | Flutter motoboy_app | ✅ Pronto | Login, Home (tabs Disponíveis/Minhas), Entrega Ativa |
@@ -37,7 +39,6 @@
 
 | Item | Onde mexer | Por quê |
 |------|-----------|---------|
-| Automatizar criação de `Usuario` ao cadastrar loja/motoboy | `LojaService.criar()` e `MotoboyService.criar()` | Hoje admin precisa criar manualmente no banco |
 | Implementar chamadas reais ao Pagar.me (tirar stubs) | `PagarmeService.java` (3 métodos com TODO) | Sem isso, não processa pagamento real |
 | Integrar SDK Stone Smart POS no Flutter | `entrega_ativa_screen.dart` (linha com TODO) | Sem isso, não cobra na maquininha |
 | Configurar Firebase FCM | `google-services.json` + `firebase-credentials.json` | Sem isso, sem push notifications |
@@ -104,13 +105,16 @@ flutter build ios --release
 ## Checklist pré-produção
 
 ```
-[x] Flyway migrations versionadas (V1 tabelas + V2 admin + V3 suporte)
+[x] Flyway migrations versionadas (V1 tabelas + V2 admin + V3 suporte + V4 deve_alterar_senha)
 [x] GlobalExceptionHandler com tratamento de 409/422/404/500
 [x] Modelo híbrido de atribuição com optimistic locking
 [x] RabbitMQ consumers para FCM, WebSocket, entregas
 [x] Timeout de entregas sem aceite (job agendado)
 [x] Perfil SUPORTE com permissões restritas
 [x] Debug remoto habilitado (JDWP:5005 + source maps Angular)
+[x] Criação automática de usuário ao cadastrar loja/motoboy
+[x] Tela de troca de senha obrigatória no 1º login (motoboy_app + store_app)
+[x] Menu "Trocar Senha" nos apps mobile
 [ ] Trocar jwt.secret para uma chave forte (min 256 bits)
 [ ] Trocar credenciais do banco (não usar postgres/postgres)
 [ ] Trocar crypto.passphrase via variável de ambiente segura
@@ -158,7 +162,7 @@ Mobile apps → APK distribuído via Play Store ou link direto
 
 | Fase | Itens | Esforço estimado |
 |------|-------|-----------------|
-| MVP funcional (sem pagamento real) | Automatizar Usuario + testes básicos | 1-2 semanas |
+| MVP funcional (sem pagamento real) | Testes básicos + validações | 1 semana |
 | Integração Pagar.me | Tirar stubs + webhook + testes | 2-3 semanas |
 | Integração Stone Smart POS | SDK Flutter + testes na maquininha | 2-3 semanas |
 | Firebase + RabbitMQ | Push + listeners | 1 semana |

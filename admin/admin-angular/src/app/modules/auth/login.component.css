@@ -10,6 +10,8 @@
   width: 100%;
   max-width: 420px;
   padding: 2.5rem;
+  background-color: #ffffff !important;
+  color: rgba(0, 0, 0, 0.87) !important;
 }
 
 .logo {

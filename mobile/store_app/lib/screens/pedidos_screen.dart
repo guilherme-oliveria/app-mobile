@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../services/pedido_service.dart';
+import 'trocar_senha_screen.dart';
 
 class PedidosScreen extends StatefulWidget {
   const PedidosScreen({super.key});
@@ -62,7 +63,35 @@ class _PedidosScreenState extends State<PedidosScreen> {
           foregroundColor: Colors.white,
           actions: [
             IconButton(icon: const Icon(Icons.refresh), onPressed: _carregar),
-            IconButton(icon: const Icon(Icons.logout), onPressed: auth.logout),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) {
+                if (value == 'trocar_senha') {
+                  Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const TrocarSenhaScreen()));
+                } else if (value == 'sair') {
+                  auth.logout();
+                }
+              },
+              itemBuilder: (_) => [
+                const PopupMenuItem(
+                  value: 'trocar_senha',
+                  child: ListTile(
+                    leading: Icon(Icons.lock_reset),
+                    title: Text('Trocar Senha'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'sair',
+                  child: ListTile(
+                    leading: Icon(Icons.logout, color: Colors.red),
+                    title: Text('Sair', style: TextStyle(color: Colors.red)),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
           ],
           bottom: const TabBar(
             labelColor: Colors.white,

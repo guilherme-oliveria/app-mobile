@@ -44,8 +44,12 @@ export class LojasComponent implements OnInit {
   }
 
   criar(): void {
-    if (!this.nova.nome || !this.nova.cnpj || !this.nova.email) {
-      alert('Preencha nome, CNPJ e email.');
+    if (!this.nova.nome || !this.nova.cnpj || !this.nova.email || !this.nova.senhaInicial) {
+      alert('Preencha nome, CNPJ, email e senha de acesso.');
+      return;
+    }
+    if (this.nova.senhaInicial!.length < 6) {
+      alert('A senha deve ter no mínimo 6 caracteres.');
       return;
     }
     this.api.criarLoja(this.nova).subscribe(() => {

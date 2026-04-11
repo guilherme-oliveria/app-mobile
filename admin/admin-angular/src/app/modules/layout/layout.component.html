@@ -16,14 +16,18 @@
         <mat-icon matListItemIcon>receipt_long</mat-icon>
         <span matListItemTitle>Pedidos</span>
       </a>
-      <a mat-list-item routerLink="/motoboys" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>two_wheeler</mat-icon>
-        <span matListItemTitle>Motoboys</span>
-      </a>
-      <a mat-list-item routerLink="/lojas" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>storefront</mat-icon>
-        <span matListItemTitle>Lojas</span>
-      </a>
+
+      <!-- Motoboys e Lojas — visível para ADMIN e SUPORTE -->
+      @if (isAdminOrSuporte) {
+        <a mat-list-item routerLink="/motoboys" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>two_wheeler</mat-icon>
+          <span matListItemTitle>Motoboys</span>
+        </a>
+        <a mat-list-item routerLink="/lojas" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>storefront</mat-icon>
+          <span matListItemTitle>Lojas</span>
+        </a>
+      }
 
       <!-- Relatórios — visível apenas para ADMIN -->
       @if (isAdmin) {
@@ -48,7 +52,7 @@
           </span>
         </div>
       </div>
-      <button mat-button class="logout-btn" (click)="logout()">
+      <button mat-button type="button" class="logout-btn" (click)="logout()">
         <mat-icon>logout</mat-icon>
         Sair
       </button>

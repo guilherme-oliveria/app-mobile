@@ -10,6 +10,7 @@ export interface Loja {
   chavePix?: string;
   ativo: boolean;
   saldoPendente: number;
+  senhaInicial?: string;   // usado apenas no cadastro
 }
 
 export interface Motoboy {
@@ -24,6 +25,7 @@ export interface Motoboy {
   latitudeAtual?: number;
   longitudeAtual?: number;
   ativo: boolean;
+  senhaInicial?: string;   // usado apenas no cadastro
 }
 
 export interface Pedido {

@@ -12,6 +12,55 @@ html, body {
   color: rgba(0, 0, 0, 0.87);
 }
 
+/* Força tema claro — sobrescreve M3 tokens de background */
+body.mat-app-background {
+  background-color: #fafafa !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+  --mat-sys-surface: #fafafa;
+  --mat-sys-on-surface: rgba(0, 0, 0, 0.87);
+  --mat-sys-surface-container: #ffffff;
+  --mat-sys-on-surface-variant: rgba(0, 0, 0, 0.6);
+  --mat-sys-background: #fafafa;
+  --mat-sys-on-background: rgba(0, 0, 0, 0.87);
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container-low: #f5f5f5;
+  --mat-sys-outline: rgba(0, 0, 0, 0.12);
+  --mat-sys-outline-variant: rgba(0, 0, 0, 0.06);
+  --mat-sidenav-content-background-color: #f5f5f5;
+  --mat-sidenav-container-background-color: #1a1a2e;
+  --mat-sidenav-container-text-color: #ffffff;
+}
+
+/* Cards — fundo branco + texto escuro */
+.mat-mdc-card {
+  background-color: #ffffff !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* Tabelas — fundo branco + texto legível */
+.mat-mdc-table {
+  background-color: #ffffff !important;
+}
+
+.mat-mdc-header-cell {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.mat-mdc-cell {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+/* Selects / Inputs — texto visível */
+.mat-mdc-select-value,
+.mat-mdc-input-element,
+.mdc-text-field__input {
+  color: rgba(0, 0, 0, 0.87) !important;
+}
+
+.mat-mdc-form-field .mdc-floating-label {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
 a {
   text-decoration: none;
   color: inherit;

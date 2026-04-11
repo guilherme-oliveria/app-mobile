@@ -5,12 +5,14 @@ class Usuario {
   final String role;
   final String nome;
   final int refId; // ID do motoboy
+  final bool deveAlterarSenha;
 
   const Usuario({
     required this.token,
     required this.role,
     required this.nome,
     required this.refId,
+    this.deveAlterarSenha = false,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
@@ -18,6 +20,7 @@ class Usuario {
         role: json['role'],
         nome: json['nome'],
         refId: json['refId'] ?? 0,
+        deveAlterarSenha: json['deveAlterarSenha'] ?? false,
       );
 }
 

@@ -10,6 +10,7 @@ export interface LoginResponse {
   role: string;
   nome: string;
   refId?: number | null;
+  deveAlterarSenha?: boolean;
 }
 
 export type UserRole = 'ADMIN' | 'SUPORTE' | 'LOJA' | 'MOTOBOY';
@@ -24,8 +25,8 @@ export class AuthService {
 
   currentUser$ = new BehaviorSubject<LoginResponse | null>(this.getStoredUser());
 
-  /** Role do usuário logado como observable */
-  role$ = this.currentUser$.pipe(map(u => u?.role as UserRole | null));
+  /** Role do usuário logado como observable — use no template com async pipe */
+  readonly role$ = this.currentUser$.pipe(map(u => u?.role as UserRole | null));
 
   /** Verifica se o usuário logado tem um dos roles informados */
   hasRole(...roles: UserRole[]): boolean {
@@ -64,7 +65,25 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+    if (this.isTokenExpired(token)) {
+      this.logout();
+      return false;
+    }
+    return true;
+  }
+
+  /** Decodifica o payload do JWT e verifica se expirou */
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expMs = payload.exp * 1000;
+      return Date.now() >= expMs;
+    } catch {
+      // token malformado → trata como expirado
+      return true;
+    }
   }
 
   private getStoredUser(): LoginResponse | null {

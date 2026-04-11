@@ -4,8 +4,8 @@
 
 .sidenav {
   width: 260px;
-  background: #1a1a2e;
-  color: white;
+  background: #1a1a2e !important;
+  color: #ffffff !important;
   display: flex;
   flex-direction: column;
 }
@@ -42,14 +42,30 @@
   margin: 2px 0;
 }
 
+::ng-deep .sidenav .mat-mdc-list-item .mdc-list-item__primary-text,
+::ng-deep .sidenav .mat-mdc-list-item .mat-mdc-list-item-title,
+::ng-deep .sidenav .mat-mdc-list-item span[matListItemTitle] {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
 ::ng-deep .sidenav .mat-mdc-list-item:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+::ng-deep .sidenav .mat-mdc-list-item:hover .mdc-list-item__primary-text,
+::ng-deep .sidenav .mat-mdc-list-item:hover span[matListItemTitle] {
+  color: #ffffff !important;
 }
 
 ::ng-deep .sidenav .mat-mdc-list-item.active-link {
   background: rgba(255, 107, 0, 0.15) !important;
   color: #FF6B00 !important;
   border-right: 3px solid #FF6B00;
+}
+
+::ng-deep .sidenav .mat-mdc-list-item.active-link .mdc-list-item__primary-text,
+::ng-deep .sidenav .mat-mdc-list-item.active-link span[matListItemTitle] {
+  color: #FF6B00 !important;
 }
 
 ::ng-deep .sidenav .mat-mdc-list-item .mat-icon {
@@ -70,7 +86,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.875rem;
   margin-bottom: 8px;
 }
@@ -86,6 +102,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #ffffff;
 }
 
 .user-role-badge {
@@ -124,6 +141,7 @@
 
 /* Main content */
 .main-content {
-  background: #f5f5f5;
+  background: #f5f5f5 !important;
+  color: rgba(0, 0, 0, 0.87) !important;
 }
 

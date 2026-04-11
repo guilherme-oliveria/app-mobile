@@ -44,8 +44,12 @@ export class MotoboysComponent implements OnInit {
   }
 
   criar(): void {
-    if (!this.novo.nome || !this.novo.cpf || !this.novo.email) {
-      alert('Preencha nome, CPF e email.');
+    if (!this.novo.nome || !this.novo.cpf || !this.novo.email || !this.novo.senhaInicial) {
+      alert('Preencha nome, CPF, email e senha de acesso.');
+      return;
+    }
+    if (this.novo.senhaInicial!.length < 6) {
+      alert('A senha deve ter no mínimo 6 caracteres.');
       return;
     }
     this.api.criarMotoboy(this.novo).subscribe(() => {

@@ -45,6 +45,13 @@
             <mat-label>Chave PIX</mat-label>
             <input matInput [(ngModel)]="nova.chavePix" placeholder="Chave PIX para repasse">
           </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Senha de acesso</mat-label>
+            <input matInput type="password" [(ngModel)]="nova.senhaInicial"
+                   placeholder="Senha para login no app">
+            <mat-hint>Mínimo 6 caracteres — loja poderá trocar no primeiro login</mat-hint>
+          </mat-form-field>
         </div>
       </mat-card-content>
       <mat-card-actions align="end">

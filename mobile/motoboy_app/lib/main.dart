@@ -5,6 +5,7 @@ import 'services/auth_service.dart';
 import 'services/entrega_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/trocar_senha_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +31,13 @@ class MotoboyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: Consumer<AuthService>(
-          builder: (ctx, auth, _) =>
-              auth.isLoggedIn ? const HomeScreen() : const LoginScreen(),
+          builder: (ctx, auth, _) {
+            if (!auth.isLoggedIn) return const LoginScreen();
+            if (auth.usuario!.deveAlterarSenha) {
+              return const TrocarSenhaScreen(obrigatoria: true);
+            }
+            return const HomeScreen();
+          },
         ),
       ),
     );

@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/trocar-senha").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // SUPORTE tem acesso a rotas de loja/motoboy (leitura + operacional)
                         // O controle fino é feito com @PreAuthorize em cada endpoint

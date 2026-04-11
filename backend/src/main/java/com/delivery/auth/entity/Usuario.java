@@ -32,6 +32,9 @@ public class Usuario {
 
     private boolean ativo = true;
 
+    @Column(name = "deve_alterar_senha")
+    private boolean deveAlterarSenha = false;
+
     @Column(name = "criado_em")
     private LocalDateTime criadoEm = LocalDateTime.now();
 }

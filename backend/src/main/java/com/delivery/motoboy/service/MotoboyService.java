@@ -1,10 +1,15 @@
 package com.delivery.motoboy.service;
 
+import com.delivery.auth.entity.Usuario;
+import com.delivery.auth.repository.UsuarioRepository;
 import com.delivery.motoboy.dto.*;
 import com.delivery.motoboy.entity.Motoboy;
 import com.delivery.motoboy.repository.MotoboyRepository;
+import com.delivery.shared.Enums.RoleUsuario;
 import com.delivery.shared.Enums.StatusMotoboy;
+import com.delivery.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +20,8 @@ import java.util.List;
 public class MotoboyService {
 
     private final MotoboyRepository motoboyRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<MotoboyResponse> listarTodos() {
         return motoboyRepository.findAll().stream().map(this::toResponse).toList();
@@ -31,6 +38,11 @@ public class MotoboyService {
 
     @Transactional
     public MotoboyResponse criar(MotoboyRequest request) {
+        // Verifica se já existe usuário com este email
+        if (usuarioRepository.findByEmail(request.email()).isPresent()) {
+            throw new BusinessException("Já existe um usuário com o email: " + request.email());
+        }
+
         var motoboy = Motoboy.builder()
                 .nome(request.nome())
                 .cpf(request.cpf())
@@ -39,7 +51,20 @@ public class MotoboyService {
                 .cnh(request.cnh())
                 .smartPosSerial(request.smartPosSerial())
                 .build();
-        return toResponse(motoboyRepository.save(motoboy));
+        motoboy = motoboyRepository.save(motoboy);
+
+        // ✅ Cria o usuário de acesso automaticamente
+        var usuario = Usuario.builder()
+                .email(request.email())
+                .nome(request.nome())
+                .senha(passwordEncoder.encode(request.senhaInicial()))
+                .role(RoleUsuario.MOTOBOY)
+                .refId(motoboy.getId())
+                .deveAlterarSenha(true)
+                .build();
+        usuarioRepository.save(usuario);
+
+        return toResponse(motoboy);
     }
 
     @Transactional

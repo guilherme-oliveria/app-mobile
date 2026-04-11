@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import '../services/entrega_service.dart';
 import '../models/models.dart';
 import 'entrega_ativa_screen.dart';
+import 'trocar_senha_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -137,9 +138,34 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             icon: const Icon(Icons.refresh),
             onPressed: _carregarTudo,
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => auth.logout(),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'trocar_senha') {
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const TrocarSenhaScreen()));
+              } else if (value == 'sair') {
+                auth.logout();
+              }
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(
+                value: 'trocar_senha',
+                child: ListTile(
+                  leading: Icon(Icons.lock_reset),
+                  title: Text('Trocar Senha'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'sair',
+                child: ListTile(
+                  leading: Icon(Icons.logout, color: Colors.red),
+                  title: Text('Sair', style: TextStyle(color: Colors.red)),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ],
           ),
         ],
         bottom: TabBar(

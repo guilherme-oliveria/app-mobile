@@ -52,4 +52,44 @@ class AuthService extends ChangeNotifier {
     await _storage.deleteAll();
     notifyListeners();
   }
+
+  Future<void> trocarSenha(String senhaAtual, String novaSenha) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/trocar-senha'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'senhaAtual': senhaAtual,
+        'novaSenha': novaSenha,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Atualiza o flag local — não precisa relogar
+      if (_usuario != null) {
+        _usuario = Usuario(
+          token: _usuario!.token,
+          role: _usuario!.role,
+          nome: _usuario!.nome,
+          refId: _usuario!.refId,
+          deveAlterarSenha: false,
+        );
+        await _storage.write(key: 'usuario', value: jsonEncode({
+          'token': _usuario!.token,
+          'role': _usuario!.role,
+          'nome': _usuario!.nome,
+          'refId': _usuario!.refId,
+          'deveAlterarSenha': false,
+        }));
+        notifyListeners();
+      }
+    } else if (response.statusCode == 422) {
+      final body = jsonDecode(response.body);
+      throw Exception(body['erro'] ?? 'Erro ao trocar senha');
+    } else {
+      throw Exception('Erro ao trocar senha');
+    }
+  }
 }

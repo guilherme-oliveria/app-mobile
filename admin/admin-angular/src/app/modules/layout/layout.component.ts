@@ -35,6 +35,10 @@ export class LayoutComponent {
     return this.auth.isAdmin();
   }
 
+  get isAdminOrSuporte(): boolean {
+    return this.auth.isAdminOrSuporte();
+  }
+
   logout() {
     this.auth.logout();
   }

@@ -30,12 +30,18 @@ export class LoginComponent {
   ocultarSenha = true;
 
   login() {
+    if (this.carregando) return;   // evita duplo-clique
     this.carregando = true;
     this.erro = '';
     this.auth.login(this.email, this.senha).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.erro = 'Email ou senha inválidos';
+      next: () => {
+        this.carregando = false;
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.erro = err?.status === 401
+          ? 'Email ou senha inválidos'
+          : 'Erro ao conectar. Tente novamente.';
         this.carregando = false;
       }
     });

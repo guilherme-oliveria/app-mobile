@@ -11,9 +11,20 @@ class Usuario {
   final String role;
   final String nome;
   final int refId;
-  const Usuario({required this.token, required this.role, required this.nome, required this.refId});
-  factory Usuario.fromJson(Map<String, dynamic> j) =>
-      Usuario(token: j['token'], role: j['role'], nome: j['nome'], refId: j['refId'] ?? 0);
+  final bool deveAlterarSenha;
+  const Usuario({
+    required this.token,
+    required this.role,
+    required this.nome,
+    required this.refId,
+    this.deveAlterarSenha = false,
+  });
+  factory Usuario.fromJson(Map<String, dynamic> j) => Usuario(
+      token: j['token'],
+      role: j['role'],
+      nome: j['nome'],
+      refId: j['refId'] ?? 0,
+      deveAlterarSenha: j['deveAlterarSenha'] ?? false);
 }
 
 class AuthService extends ChangeNotifier {
@@ -23,8 +34,6 @@ class AuthService extends ChangeNotifier {
   bool get isLoggedIn => _usuario != null;
   Usuario? get usuario => _usuario;
   String get token => _usuario?.token ?? '';
-
-  void Function()? logoutCallback;
 
   AuthService() { _carregarDoStorage(); }
 
@@ -53,5 +62,44 @@ class AuthService extends ChangeNotifier {
     _usuario = null;
     await _storage.deleteAll();
     notifyListeners();
+  }
+
+  Future<void> trocarSenha(String senhaAtual, String novaSenha) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/trocar-senha'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'senhaAtual': senhaAtual,
+        'novaSenha': novaSenha,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      if (_usuario != null) {
+        _usuario = Usuario(
+          token: _usuario!.token,
+          role: _usuario!.role,
+          nome: _usuario!.nome,
+          refId: _usuario!.refId,
+          deveAlterarSenha: false,
+        );
+        await _storage.write(key: 'usuario', value: jsonEncode({
+          'token': _usuario!.token,
+          'role': _usuario!.role,
+          'nome': _usuario!.nome,
+          'refId': _usuario!.refId,
+          'deveAlterarSenha': false,
+        }));
+        notifyListeners();
+      }
+    } else if (response.statusCode == 422) {
+      final body = jsonDecode(response.body);
+      throw Exception(body['erro'] ?? 'Erro ao trocar senha');
+    } else {
+      throw Exception('Erro ao trocar senha');
+    }
   }
 }
