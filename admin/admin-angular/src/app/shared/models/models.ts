@@ -53,10 +53,11 @@ export interface Entrega {
   id: number;
   pedido: Pedido;
   motoboy?: Motoboy;
-  status: 'PENDENTE' | 'ATRIBUIDA' | 'COLETADA' | 'FINALIZADA' | 'CANCELADA';
+  status: 'DISPONIVEL' | 'ATRIBUIDA' | 'COLETADA' | 'FINALIZADA' | 'CANCELADA';
   atribuidaEm?: string;
   coletadaEm?: string;
   finalizadaEm?: string;
+  criadoEm?: string;
 }
 
 export interface LiquidacaoDia {

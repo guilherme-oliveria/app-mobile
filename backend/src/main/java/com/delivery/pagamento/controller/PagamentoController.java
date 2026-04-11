@@ -30,6 +30,7 @@ public class PagamentoController {
 
     /**
      * Histórico de liquidações de uma loja.
+     * ❌ SUPORTE não tem acesso — dados financeiros sensíveis.
      */
     @GetMapping("/liquidacoes/loja/{lojaId}")
     @PreAuthorize("hasAnyRole('ADMIN','LOJA')")
@@ -38,7 +39,8 @@ public class PagamentoController {
     }
 
     /**
-     * Dispara liquidação manualmente (uso em desenvolvimento/admin).
+     * Dispara liquidação manualmente.
+     * ❌ SUPORTE não tem acesso.
      */
     @PostMapping("/liquidar-agora")
     @PreAuthorize("hasRole('ADMIN')")

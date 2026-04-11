@@ -3,7 +3,10 @@ package com.delivery.shared;
 public class Enums {
 
     public enum RoleUsuario {
-        ADMIN, LOJA, MOTOBOY
+        ADMIN,
+        SUPORTE,   // Acesso operacional — sem exclusão e sem dados financeiros
+        LOJA,
+        MOTOBOY
     }
 
     public enum StatusPedido {
@@ -17,7 +20,7 @@ public class Enums {
     }
 
     public enum StatusEntrega {
-        PENDENTE,
+        DISPONIVEL,
         ATRIBUIDA,
         COLETADA,
         FINALIZADA,

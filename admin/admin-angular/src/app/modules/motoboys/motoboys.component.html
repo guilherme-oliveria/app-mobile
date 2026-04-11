@@ -101,6 +101,20 @@
             </td>
           </ng-container>
 
+          <!-- Ações — inativar visível SOMENTE para ADMIN -->
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let m">
+              @if (isAdmin && m.ativo) {
+                <button mat-icon-button color="warn"
+                        title="Inativar motoboy"
+                        (click)="inativar(m.id)">
+                  <mat-icon>block</mat-icon>
+                </button>
+              }
+            </td>
+          </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="colunas"></tr>
           <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
         </table>

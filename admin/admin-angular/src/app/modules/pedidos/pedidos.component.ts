@@ -65,7 +65,7 @@ export class PedidosComponent implements OnInit {
 
   criarEntrega(pedidoId: number) {
     this.api.criarEntrega(pedidoId).subscribe(() => {
-      alert('Entrega criada! Atribua um motoboy no Dashboard.');
+      alert('Entrega criada! Motoboys serão notificados. Você também pode atribuir manualmente no Dashboard.');
     });
   }
 }

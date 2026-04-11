@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,6 +34,9 @@ public class SecurityConfig {
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
+    @Value("${crypto.passphrase}")
+    private String cryptoPassphrase;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -44,8 +46,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/loja/**").hasAnyRole("LOJA", "ADMIN")
-                        .requestMatchers("/api/motoboy/**").hasAnyRole("MOTOBOY", "ADMIN")
+                        // SUPORTE tem acesso a rotas de loja/motoboy (leitura + operacional)
+                        // O controle fino é feito com @PreAuthorize em cada endpoint
+                        .requestMatchers("/api/loja/**").hasAnyRole("LOJA", "ADMIN", "SUPORTE")
+                        .requestMatchers("/api/motoboy/**").hasAnyRole("MOTOBOY", "ADMIN", "SUPORTE")
                         .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -69,7 +73,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new AesPasswordEncoder(cryptoPassphrase);
     }
 
     @Bean

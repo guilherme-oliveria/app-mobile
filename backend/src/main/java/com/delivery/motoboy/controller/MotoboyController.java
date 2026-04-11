@@ -21,25 +21,25 @@ public class MotoboyController {
     private final MotoboyService motoboyService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE')")
     public ResponseEntity<List<MotoboyResponse>> listar() {
         return ResponseEntity.ok(motoboyService.listarTodos());
     }
 
     @GetMapping("/disponiveis")
-    @PreAuthorize("hasAnyRole('ADMIN','LOJA')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','LOJA')")
     public ResponseEntity<List<MotoboyResponse>> listarDisponiveis() {
         return ResponseEntity.ok(motoboyService.listarDisponiveis());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','MOTOBOY')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','MOTOBOY')")
     public ResponseEntity<MotoboyResponse> buscar(@PathVariable Long id) {
         return ResponseEntity.ok(motoboyService.buscarPorId(id));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE')")
     public ResponseEntity<MotoboyResponse> criar(@RequestBody @Valid MotoboyRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(motoboyService.criar(request));
     }
@@ -53,7 +53,7 @@ public class MotoboyController {
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('ADMIN','MOTOBOY')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','MOTOBOY')")
     public ResponseEntity<Void> atualizarStatus(@PathVariable Long id,
                                                  @RequestBody Map<String, String> body) {
         motoboyService.atualizarStatus(id, StatusMotoboy.valueOf(body.get("status")));
@@ -66,5 +66,13 @@ public class MotoboyController {
                                                    @RequestBody Map<String, String> body) {
         motoboyService.atualizarFcmToken(id, body.get("token"));
         return ResponseEntity.ok().build();
+    }
+
+    // ❌ SUPORTE não pode inativar — somente ADMIN
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> inativar(@PathVariable Long id) {
+        motoboyService.inativar(id);
+        return ResponseEntity.noContent().build();
     }
 }

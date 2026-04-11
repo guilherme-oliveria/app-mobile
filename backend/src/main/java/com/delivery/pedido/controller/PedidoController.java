@@ -22,19 +22,19 @@ public class PedidoController {
     private final PedidoService pedidoService;
 
     @GetMapping("/loja/{lojaId}")
-    @PreAuthorize("hasAnyRole('ADMIN','LOJA')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','LOJA')")
     public ResponseEntity<List<PedidoResponse>> listarPorLoja(@PathVariable Long lojaId) {
         return ResponseEntity.ok(pedidoService.listarPorLoja(lojaId));
     }
 
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasAnyRole('ADMIN','MOTOBOY')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','MOTOBOY')")
     public ResponseEntity<List<PedidoResponse>> listarPorStatus(@PathVariable StatusPedido status) {
         return ResponseEntity.ok(pedidoService.listarPorStatus(status));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','LOJA','MOTOBOY')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','LOJA','MOTOBOY')")
     public ResponseEntity<PedidoResponse> buscar(@PathVariable Long id) {
         return ResponseEntity.ok(pedidoService.buscarPorId(id));
     }
@@ -45,6 +45,7 @@ public class PedidoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.criar(request));
     }
 
+    // ❌ SUPORTE não pode alterar status (inclui CANCELADO) — somente ADMIN, LOJA ou MOTOBOY
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN','LOJA','MOTOBOY')")
     public ResponseEntity<PedidoResponse> atualizarStatus(@PathVariable Long id,

@@ -1,12 +1,13 @@
 -- ===========================================================
 -- V2 — Inserir usuário admin padrão
 -- ===========================================================
--- Senha: admin123 (hash BCrypt)
+-- Senha encriptada com AES-256-GCM (passphrase: crypto.passphrase)
+-- Use CryptoUtil para descriptografar quando necessário
 
 INSERT INTO usuarios (email, senha, nome, role, ativo, criado_em)
 VALUES (
     'admin@delivery.com',
-    '$2a$10$N.zmdr9zkzoGtM7gKSomDOGHPibj.hAS5dMZRSBjbcFECNqDgr2Gy',
+    '+pXQOCxZFUdrLr37A994izTKMfi6EqCft7aMBMCaF/EIvNax2ztNkVYmrCGtnbwSxAcPRKNHR1kf',
     'Administrador',
     'ADMIN',
     true,

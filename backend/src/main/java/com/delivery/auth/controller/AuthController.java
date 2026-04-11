@@ -30,10 +30,11 @@ public class AuthController {
         Usuario usuario = usuarioRepository.findByEmail(request.email()).orElseThrow();
         String token = jwtService.gerarToken(userDetails, usuario.getRole().name(), usuario.getRefId());
 
-        return ResponseEntity.ok(new LoginResponse(token, usuario.getRole().name(), usuario.getNome()));
+        return ResponseEntity.ok(new LoginResponse(
+                token, usuario.getRole().name(), usuario.getNome(), usuario.getRefId()));
     }
 
     // Records como DTOs (Java 21)
     public record LoginRequest(String email, String senha) {}
-    public record LoginResponse(String token, String role, String nome) {}
+    public record LoginResponse(String token, String role, String nome, Long refId) {}
 }

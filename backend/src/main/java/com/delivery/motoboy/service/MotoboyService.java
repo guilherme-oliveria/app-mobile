@@ -58,6 +58,18 @@ public class MotoboyService {
     }
 
     @Transactional
+    public void inativar(Long id) {
+        var motoboy = buscarEntidade(id);
+        if (motoboy.getStatus() == StatusMotoboy.EM_ENTREGA) {
+            throw new com.delivery.shared.exception.BusinessException(
+                    "Motoboy está em entrega ativa — não pode ser inativado agora");
+        }
+        motoboy.setAtivo(false);
+        motoboy.setStatus(StatusMotoboy.INATIVO);
+        motoboyRepository.save(motoboy);
+    }
+
+    @Transactional
     public void atualizarFcmToken(Long id, String token) {
         var motoboy = buscarEntidade(id);
         motoboy.setFcmToken(token);

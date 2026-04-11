@@ -8,10 +8,12 @@ const _baseUrl = 'http://10.0.2.2:8080/api';
 
 class EntregaService extends ChangeNotifier {
   List<Entrega> _entregas = [];
+  List<Entrega> _disponiveis = [];
   Entrega? _entregaAtiva;
   bool _carregando = false;
 
   List<Entrega> get entregas => _entregas;
+  List<Entrega> get disponiveis => _disponiveis;
   Entrega? get entregaAtiva => _entregaAtiva;
   bool get carregando => _carregando;
 
@@ -20,6 +22,7 @@ class EntregaService extends ChangeNotifier {
         'Authorization': 'Bearer $token',
       };
 
+  /// Carrega as entregas do motoboy logado (historial)
   Future<void> carregarEntregas(String token, int motoboyId) async {
     _carregando = true;
     notifyListeners();
@@ -45,6 +48,47 @@ class EntregaService extends ChangeNotifier {
 
     _carregando = false;
     notifyListeners();
+  }
+
+  /// Carrega entregas DISPONÍVEIS para aceitar (modelo híbrido)
+  Future<void> carregarDisponiveis(String token) async {
+    final res = await http.get(
+      Uri.parse('$_baseUrl/entregas/disponiveis'),
+      headers: _headers(token),
+    );
+
+    if (res.statusCode == 200) {
+      final List<dynamic> lista = jsonDecode(res.body);
+      _disponiveis = lista.map((e) => Entrega.fromJson(e)).toList();
+    }
+
+    notifyListeners();
+  }
+
+  /// Motoboy aceita uma entrega disponível (auto-atribuição)
+  /// Retorna true se aceito, false se já foi aceita por outro
+  Future<bool> aceitarEntrega(String token, int entregaId) async {
+    final res = await http.post(
+      Uri.parse('$_baseUrl/entregas/$entregaId/aceitar'),
+      headers: _headers(token),
+    );
+
+    if (res.statusCode == 200) {
+      // Remove da lista de disponíveis
+      _disponiveis.removeWhere((e) => e.id == entregaId);
+      notifyListeners();
+      return true;
+    } else if (res.statusCode == 409) {
+      // Outro motoboy aceitou primeiro (optimistic lock)
+      _disponiveis.removeWhere((e) => e.id == entregaId);
+      notifyListeners();
+      return false;
+    } else if (res.statusCode == 422) {
+      // Erro de negócio (ex: motoboy já está em entrega)
+      final body = jsonDecode(res.body);
+      throw Exception(body['erro'] ?? 'Erro ao aceitar entrega');
+    }
+    throw Exception('Erro ao aceitar entrega');
   }
 
   Future<void> confirmarColeta(String token, int entregaId) async {

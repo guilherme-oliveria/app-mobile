@@ -7,8 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ApiService } from '../../core/services/api.service';
 import { Motoboy } from '../../shared/models/models';
+import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-motoboys',
@@ -21,22 +22,28 @@ import { Motoboy } from '../../shared/models/models';
   styleUrl: './motoboys.component.css'
 })
 export class MotoboysComponent implements OnInit {
+
   private readonly api = inject(ApiService);
+  readonly auth = inject(AuthService);
 
   motoboys: Motoboy[] = [];
   mostrarForm = false;
   novo: Partial<Motoboy> = {};
-  colunas = ['id', 'nome', 'cpf', 'email', 'telefone', 'smartPos', 'status'];
+  colunas = ['id', 'nome', 'cpf', 'email', 'telefone', 'smartPos', 'status', 'acoes'];
 
-  ngOnInit() {
+  get isAdmin(): boolean {
+    return this.auth.isAdmin();
+  }
+
+  ngOnInit(): void {
     this.carregar();
   }
 
-  carregar() {
+  carregar(): void {
     this.api.getMotoboys().subscribe(m => this.motoboys = m);
   }
 
-  criar() {
+  criar(): void {
     if (!this.novo.nome || !this.novo.cpf || !this.novo.email) {
       alert('Preencha nome, CPF e email.');
       return;
@@ -46,5 +53,10 @@ export class MotoboysComponent implements OnInit {
       this.mostrarForm = false;
       this.carregar();
     });
+  }
+
+  inativar(id: number): void {
+    if (!confirm('Deseja inativar este motoboy? Ele perdera o acesso a plataforma.')) return;
+    this.api.inativarMotoboy(id).subscribe(() => this.carregar());
   }
 }

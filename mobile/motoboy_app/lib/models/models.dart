@@ -21,7 +21,7 @@ class Usuario {
       );
 }
 
-enum StatusEntrega { PENDENTE, ATRIBUIDA, COLETADA, FINALIZADA, CANCELADA }
+enum StatusEntrega { DISPONIVEL, ATRIBUIDA, COLETADA, FINALIZADA, CANCELADA }
 
 class Entrega {
   final int id;

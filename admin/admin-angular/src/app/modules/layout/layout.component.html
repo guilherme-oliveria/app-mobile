@@ -24,10 +24,14 @@
         <mat-icon matListItemIcon>storefront</mat-icon>
         <span matListItemTitle>Lojas</span>
       </a>
-      <a mat-list-item routerLink="/relatorios" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>bar_chart</mat-icon>
-        <span matListItemTitle>Relatórios</span>
-      </a>
+
+      <!-- Relatórios — visível apenas para ADMIN -->
+      @if (isAdmin) {
+        <a mat-list-item routerLink="/relatorios" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>bar_chart</mat-icon>
+          <span matListItemTitle>Relatórios</span>
+        </a>
+      }
     </mat-nav-list>
 
     <!-- User info -->
@@ -35,7 +39,14 @@
       <mat-divider></mat-divider>
       <div class="user-info">
         <mat-icon>account_circle</mat-icon>
-        <span class="user-name">{{ userName }}</span>
+        <div class="user-details">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role-badge"
+                [class.badge-admin]="userRole === 'ADMIN'"
+                [class.badge-suporte]="userRole === 'SUPORTE'">
+            {{ userRole }}
+          </span>
+        </div>
       </div>
       <button mat-button class="logout-btn" (click)="logout()">
         <mat-icon>logout</mat-icon>

@@ -25,7 +25,11 @@ public class Entrega {
     private Motoboy motoboy;
 
     @Enumerated(EnumType.STRING)
-    private StatusEntrega status = StatusEntrega.PENDENTE;
+    private StatusEntrega status = StatusEntrega.DISPONIVEL;
+
+    // Optimistic locking — evita dois motoboys aceitarem ao mesmo tempo
+    @Version
+    private Long version;
 
     @Column(name = "atribuida_em")
     private LocalDateTime atribuidaEm;

@@ -10,8 +10,16 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Copia código e compila
+# ┌──────────────────────────────────────────────────────────────┐
+# │ 🔧 DESENVOLVIMENTO — build sem minificação + source maps   │
+# │    Permite debug no browser F12 → Sources → seus .ts        │
+# │                                                              │
+# │ ⚠️  PRODUÇÃO — trocar por:                                  │
+# │    RUN npx ng build --configuration production               │
+# │    E no angular.json remover "sourceMap": true do production │
+# └──────────────────────────────────────────────────────────────┘
 COPY . .
-RUN npx ng build --configuration production
+RUN npx ng build --configuration development
 
 # ============================
 # Stage 2: Servir com Nginx

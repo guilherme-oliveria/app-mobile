@@ -10,54 +10,76 @@ export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly api = environment.apiUrl;
 
-  // ── Lojas ──────────────────────────────────────────
+  // --- Lojas ---
+
   getLojas(): Observable<Loja[]> {
     return this.http.get<Loja[]>(`${this.api}/lojas`);
   }
+
   getLoja(id: number): Observable<Loja> {
     return this.http.get<Loja>(`${this.api}/lojas/${id}`);
   }
+
   criarLoja(data: Partial<Loja>): Observable<Loja> {
     return this.http.post<Loja>(`${this.api}/lojas`, data);
   }
 
-  // ── Motoboys ───────────────────────────────────────
+  inativarLoja(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.api}/lojas/${id}`);
+  }
+
+  // --- Motoboys ---
+
   getMotoboys(): Observable<Motoboy[]> {
     return this.http.get<Motoboy[]>(`${this.api}/motoboys`);
   }
+
   getMotoboysdisponiveis(): Observable<Motoboy[]> {
     return this.http.get<Motoboy[]>(`${this.api}/motoboys/disponiveis`);
   }
+
   criarMotoboy(data: Partial<Motoboy>): Observable<Motoboy> {
     return this.http.post<Motoboy>(`${this.api}/motoboys`, data);
   }
 
-  // ── Pedidos ────────────────────────────────────────
+  inativarMotoboy(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.api}/motoboys/${id}`);
+  }
+
+  // --- Pedidos ---
+
   getPedidosPorLoja(lojaId: number): Observable<Pedido[]> {
     return this.http.get<Pedido[]>(`${this.api}/pedidos/loja/${lojaId}`);
   }
+
   getPedidosPorStatus(status: StatusPedido): Observable<Pedido[]> {
     return this.http.get<Pedido[]>(`${this.api}/pedidos/status/${status}`);
   }
+
   atualizarStatusPedido(id: number, status: StatusPedido): Observable<Pedido> {
     return this.http.patch<Pedido>(`${this.api}/pedidos/${id}/status`, { status });
   }
 
-  // ── Entregas ───────────────────────────────────────
-  getEntregasPendentes(): Observable<Entrega[]> {
-    return this.http.get<Entrega[]>(`${this.api}/entregas/pendentes`);
+  // --- Entregas ---
+
+  getEntregasDisponiveis(): Observable<Entrega[]> {
+    return this.http.get<Entrega[]>(`${this.api}/entregas/disponiveis`);
   }
+
   atribuirMotoboy(entregaId: number, motoboyId: number): Observable<Entrega> {
     return this.http.patch<Entrega>(`${this.api}/entregas/${entregaId}/atribuir`, { motoboyId });
   }
+
   criarEntrega(pedidoId: number): Observable<Entrega> {
     return this.http.post<Entrega>(`${this.api}/entregas/pedido/${pedidoId}`, {});
   }
 
-  // ── Pagamentos / Liquidações ───────────────────────
+  // --- Pagamentos / Liquidacoes ---
+
   getLiquidacoesPorLoja(lojaId: number): Observable<LiquidacaoDia[]> {
     return this.http.get<LiquidacaoDia[]>(`${this.api}/pagamentos/liquidacoes/loja/${lojaId}`);
   }
+
   liquidarAgora(): Observable<void> {
     return this.http.post<void>(`${this.api}/pagamentos/liquidar-agora`, {});
   }

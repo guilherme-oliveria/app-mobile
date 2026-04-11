@@ -1,6 +1,7 @@
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -30,7 +31,9 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/lojas/lojas.component').then(m => m.LojasComponent)
       },
       {
+        // ❌ SUPORTE não acessa relatórios — apenas ADMIN
         path: 'relatorios',
+        canActivate: [roleGuard('ADMIN')],
         loadComponent: () => import('./modules/relatorios/relatorios.component').then(m => m.RelatoriosComponent)
       }
     ]

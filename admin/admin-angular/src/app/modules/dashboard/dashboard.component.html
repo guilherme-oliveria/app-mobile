@@ -14,8 +14,8 @@
     <mat-card class="metric-card">
       <mat-card-content>
         <mat-icon class="metric-icon blue">delivery_dining</mat-icon>
-        <div class="metric-value">{{ entregasPendentes.length }}</div>
-        <div class="metric-label">Entregas pendentes</div>
+        <div class="metric-value">{{ entregasDisponiveis.length }}</div>
+        <div class="metric-label">Entregas disponíveis</div>
       </mat-card-content>
     </mat-card>
 
@@ -28,18 +28,26 @@
     </mat-card>
   </div>
 
-  <!-- Tabela de entregas pendentes -->
+  <!-- Tabela de entregas disponíveis (modelo híbrido) -->
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Entregas pendentes de atribuição</mat-card-title>
+      <mat-card-title>
+        Entregas disponíveis — aguardando motoboy aceitar
+        <span class="subtitle">Motoboys aceitam pelo app • Você pode atribuir manualmente</span>
+      </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      @if (entregasPendentes.length) {
-        <table mat-table [dataSource]="entregasPendentes" class="full-width">
+      @if (entregasDisponiveis.length) {
+        <table mat-table [dataSource]="entregasDisponiveis" class="full-width">
 
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef>#</th>
             <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="loja">
+            <th mat-header-cell *matHeaderCellDef>Loja</th>
+            <td mat-cell *matCellDef="let e">{{ e.pedido.lojaNome }}</td>
           </ng-container>
 
           <ng-container matColumnDef="cliente">
@@ -57,11 +65,22 @@
             <td mat-cell *matCellDef="let e">R$ {{ e.pedido.valorTotal | number:'1.2-2' }}</td>
           </ng-container>
 
+          <ng-container matColumnDef="tempo">
+            <th mat-header-cell *matHeaderCellDef>Esperando</th>
+            <td mat-cell *matCellDef="let e"
+                [class.timeout]="isTimeout(e)">
+              {{ minutosEsperando(e) }} min
+              @if (isTimeout(e)) {
+                <mat-icon class="timeout-icon">warning</mat-icon>
+              }
+            </td>
+          </ng-container>
+
           <ng-container matColumnDef="acao">
-            <th mat-header-cell *matHeaderCellDef>Atribuir motoboy</th>
+            <th mat-header-cell *matHeaderCellDef>Atribuir manualmente</th>
             <td mat-cell *matCellDef="let e">
               <mat-form-field appearance="outline" class="select-motoboy">
-                <mat-select placeholder="Selecionar"
+                <mat-select placeholder="Selecionar motoboy"
                             (selectionChange)="atribuirMotoboy(e.id, $event.value)">
                   @for (m of motoboysDisponiveis; track m.id) {
                     <mat-option [value]="m.id">{{ m.nome }}</mat-option>
@@ -72,10 +91,11 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="colunas"></tr>
-          <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+          <tr mat-row *matRowDef="let row; columns: colunas;"
+              [class.row-timeout]="isTimeout(row)"></tr>
         </table>
       } @else {
-        <p class="vazio">Nenhuma entrega pendente de atribuição.</p>
+        <p class="vazio">✅ Nenhuma entrega pendente — todos os motoboys estão atendendo.</p>
       }
     </mat-card-content>
   </mat-card>

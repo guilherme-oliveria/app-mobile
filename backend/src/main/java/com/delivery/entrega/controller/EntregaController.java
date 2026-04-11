@@ -17,26 +17,38 @@ public class EntregaController {
 
     private final EntregaService entregaService;
 
-    @GetMapping("/pendentes")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Entrega>> listarPendentes() {
-        return ResponseEntity.ok(entregaService.listarPendentes());
+    /**
+     * Lista entregas disponíveis (status DISPONIVEL) — para motoboy e admin.
+     * Motoboy: vê no app e pode aceitar.
+     * Admin: vê no dashboard e pode atribuir manualmente.
+     */
+    @GetMapping("/disponiveis")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','MOTOBOY')")
+    public ResponseEntity<List<Entrega>> listarDisponiveis() {
+        return ResponseEntity.ok(entregaService.listarDisponiveis());
     }
 
     @GetMapping("/motoboy/{motoboyId}")
-    @PreAuthorize("hasAnyRole('ADMIN','MOTOBOY')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','MOTOBOY')")
     public ResponseEntity<List<Entrega>> listarPorMotoboy(@PathVariable Long motoboyId) {
         return ResponseEntity.ok(entregaService.listarPorMotoboy(motoboyId));
     }
 
     @PostMapping("/pedido/{pedidoId}")
-    @PreAuthorize("hasAnyRole('ADMIN','LOJA')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','LOJA')")
     public ResponseEntity<Entrega> criar(@PathVariable Long pedidoId) {
         return ResponseEntity.ok(entregaService.criarParaPedido(pedidoId));
     }
 
+    @PostMapping("/{id}/aceitar")
+    @PreAuthorize("hasRole('MOTOBOY')")
+    public ResponseEntity<Entrega> aceitar(@PathVariable Long id) {
+        return ResponseEntity.ok(entregaService.aceitarEntrega(id));
+    }
+
+    // SUPORTE pode atribuir motoboy manualmente
     @PatchMapping("/{id}/atribuir")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE')")
     public ResponseEntity<Entrega> atribuir(@PathVariable Long id,
                                              @RequestBody Map<String, Long> body) {
         return ResponseEntity.ok(entregaService.atribuirMotoboy(id, body.get("motoboyId")));

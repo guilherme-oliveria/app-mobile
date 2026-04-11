@@ -20,30 +20,31 @@ public class LojaController {
     private final LojaService lojaService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE')")
     public ResponseEntity<List<LojaResponse>> listar() {
         return ResponseEntity.ok(lojaService.listarTodas());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','LOJA')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','LOJA')")
     public ResponseEntity<LojaResponse> buscar(@PathVariable Long id) {
         return ResponseEntity.ok(lojaService.buscarPorId(id));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE')")
     public ResponseEntity<LojaResponse> criar(@RequestBody @Valid LojaRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(lojaService.criar(request));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','LOJA')")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPORTE','LOJA')")
     public ResponseEntity<LojaResponse> atualizar(@PathVariable Long id,
                                                    @RequestBody @Valid LojaRequest request) {
         return ResponseEntity.ok(lojaService.atualizar(id, request));
     }
 
+    // ❌ SUPORTE não pode inativar — somente ADMIN
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> inativar(@PathVariable Long id) {

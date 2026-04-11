@@ -7,8 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ApiService } from '../../core/services/api.service';
 import { Loja } from '../../shared/models/models';
+import { ApiService } from '../../core/services/api.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-lojas',
@@ -21,22 +22,28 @@ import { Loja } from '../../shared/models/models';
   styleUrl: './lojas.component.css'
 })
 export class LojasComponent implements OnInit {
+
   private readonly api = inject(ApiService);
+  readonly auth = inject(AuthService);
 
   lojas: Loja[] = [];
   mostrarForm = false;
   nova: Partial<Loja> = {};
-  colunas = ['id', 'nome', 'cnpj', 'email', 'telefone', 'saldo', 'status'];
+  colunas = ['id', 'nome', 'cnpj', 'email', 'telefone', 'saldo', 'status', 'acoes'];
 
-  ngOnInit() {
+  get isAdmin(): boolean {
+    return this.auth.isAdmin();
+  }
+
+  ngOnInit(): void {
     this.carregar();
   }
 
-  carregar() {
+  carregar(): void {
     this.api.getLojas().subscribe(l => this.lojas = l);
   }
 
-  criar() {
+  criar(): void {
     if (!this.nova.nome || !this.nova.cnpj || !this.nova.email) {
       alert('Preencha nome, CNPJ e email.');
       return;
@@ -46,5 +53,10 @@ export class LojasComponent implements OnInit {
       this.mostrarForm = false;
       this.carregar();
     });
+  }
+
+  inativar(id: number): void {
+    if (!confirm('Deseja inativar esta loja? Esta ação remove o acesso dela à plataforma.')) return;
+    this.api.inativarLoja(id).subscribe(() => this.carregar());
   }
 }
