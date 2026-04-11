@@ -30,11 +30,23 @@ public class Usuario {
     @Column(name = "ref_id")
     private Long refId;
 
+    @Builder.Default
     private boolean ativo = true;
 
     @Column(name = "deve_alterar_senha")
+    @Builder.Default
     private boolean deveAlterarSenha = false;
 
     @Column(name = "criado_em")
+    @Builder.Default
     private LocalDateTime criadoEm = LocalDateTime.now();
+
+    @Column(name = "atualizado_em")
+    @Builder.Default
+    private LocalDateTime atualizadoEm = LocalDateTime.now();
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
 }

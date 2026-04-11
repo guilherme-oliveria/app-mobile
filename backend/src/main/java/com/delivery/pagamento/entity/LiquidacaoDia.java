@@ -41,6 +41,7 @@ public class LiquidacaoDia {
     private String pagarmeTransferId;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private StatusLiquidacao status = StatusLiquidacao.PENDENTE;
 
     @Column(name = "processada_em")

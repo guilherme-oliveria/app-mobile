@@ -41,12 +41,15 @@ public class Transacao {
     private String smartPosSerial;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private StatusTransacao status = StatusTransacao.PENDENTE;
 
     // Flag: já incluída na liquidação diária
+    @Builder.Default
     private boolean liquidada = false;
 
     @Column(name = "criado_em")
+    @Builder.Default
     private LocalDateTime criadoEm = LocalDateTime.now();
 
     @Column(name = "processada_em")

@@ -42,10 +42,22 @@ public class Motoboy {
     private Double longitudeAtual;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private StatusMotoboy status = StatusMotoboy.DISPONIVEL;
 
+    @Builder.Default
     private boolean ativo = true;
 
     @Column(name = "criado_em")
+    @Builder.Default
     private LocalDateTime criadoEm = LocalDateTime.now();
+
+    @Column(name = "atualizado_em")
+    @Builder.Default
+    private LocalDateTime atualizadoEm = LocalDateTime.now();
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
 }

@@ -44,17 +44,21 @@ public class Pedido {
     private BigDecimal valorTotal;
 
     @Column(name = "taxa_entrega", precision = 10, scale = 2)
+    @Builder.Default
     private BigDecimal taxaEntrega = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private StatusPedido status = StatusPedido.AGUARDANDO_ACEITE;
 
     private String observacao;
 
     @Column(name = "criado_em")
+    @Builder.Default
     private LocalDateTime criadoEm = LocalDateTime.now();
 
     @Column(name = "atualizado_em")
+    @Builder.Default
     private LocalDateTime atualizadoEm = LocalDateTime.now();
 
     @PreUpdate

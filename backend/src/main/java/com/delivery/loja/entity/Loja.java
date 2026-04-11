@@ -35,10 +35,22 @@ public class Loja {
 
     // Saldo a liquidar (calculado no fim do dia)
     @Column(name = "saldo_pendente", precision = 10, scale = 2)
+    @Builder.Default
     private BigDecimal saldoPendente = BigDecimal.ZERO;
 
+    @Builder.Default
     private boolean ativo = true;
 
     @Column(name = "criado_em")
+    @Builder.Default
     private LocalDateTime criadoEm = LocalDateTime.now();
+
+    @Column(name = "atualizado_em")
+    @Builder.Default
+    private LocalDateTime atualizadoEm = LocalDateTime.now();
+
+    @PreUpdate
+    public void preUpdate() {
+        this.atualizadoEm = LocalDateTime.now();
+    }
 }

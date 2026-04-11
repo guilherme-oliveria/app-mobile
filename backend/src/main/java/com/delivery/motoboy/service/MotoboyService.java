@@ -50,6 +50,9 @@ public class MotoboyService {
                 .telefone(request.telefone())
                 .cnh(request.cnh())
                 .smartPosSerial(request.smartPosSerial())
+                .status(StatusMotoboy.DISPONIVEL)
+                .ativo(true)
+                .criadoEm(java.time.LocalDateTime.now())
                 .build();
         motoboy = motoboyRepository.save(motoboy);
 

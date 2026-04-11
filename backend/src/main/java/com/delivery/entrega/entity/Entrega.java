@@ -25,6 +25,7 @@ public class Entrega {
     private Motoboy motoboy;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private StatusEntrega status = StatusEntrega.DISPONIVEL;
 
     // Optimistic locking — evita dois motoboys aceitarem ao mesmo tempo
@@ -45,5 +46,6 @@ public class Entrega {
     private String codigoConfirmacao;
 
     @Column(name = "criado_em")
+    @Builder.Default
     private LocalDateTime criadoEm = LocalDateTime.now();
 }
