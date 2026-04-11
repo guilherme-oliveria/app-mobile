@@ -80,7 +80,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigSource() {
         var config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+
+        // ─── CORS só afeta browsers (Angular Admin, Flutter Web) ───
+        // Apps nativos (APK Android / iOS) NÃO passam por CORS.
+        //
+        // Em PRODUÇÃO: troque para o domínio real do painel admin:
+        //   config.setAllowedOrigins(List.of("https://admin.seudelivery.com"));
+        //
+        // Em DESENVOLVIMENTO: aceita qualquer localhost (porta dinâmica do Flutter Web / ng serve)
+        config.setAllowedOriginPatterns(List.of(allowedOrigins.split(",")));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

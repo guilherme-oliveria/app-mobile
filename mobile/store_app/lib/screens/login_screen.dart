@@ -20,8 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AuthService>().login(
             _emailCtrl.text.trim(), _senhaCtrl.text.trim());
-    } catch (_) {
-      setState(() => _erro = 'Email ou senha inválidos');
+    } catch (e) {
+      setState(() => _erro = e.toString().replaceAll('Exception: ', ''));
     } finally {
       if (mounted) setState(() => _carregando = false);
     }

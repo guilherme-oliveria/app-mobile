@@ -1,9 +1,12 @@
 // lib/services/pedido_service.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
-const _baseUrl = 'http://10.0.2.2:8080/api';
+const _baseUrl = kIsWeb
+    ? 'http://localhost:8080/api'
+    : 'http://10.0.2.2:8080/api';
 
 // ── Modelos ────────────────────────────────────────────────────────────────
 

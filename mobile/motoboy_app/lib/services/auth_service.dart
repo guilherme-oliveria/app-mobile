@@ -1,12 +1,17 @@
 // lib/services/auth_service.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../models/models.dart';
 
-const _baseUrl = 'http://10.0.2.2:8080/api'; // 10.0.2.2 = localhost no emulador Android
-// Em produção: const _baseUrl = 'https://sua-api.com/api';
+// Browser (Chrome/Edge) → localhost | Emulador Android → 10.0.2.2
+// Celular físico na rede → troque para: 'http://192.168.X.X:8080/api'
+// Produção → troque para: 'https://sua-api.com/api'
+const _baseUrl = kIsWeb
+    ? 'http://localhost:8080/api'
+    : 'http://10.0.2.2:8080/api';
 
 class AuthService extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -29,6 +34,9 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  /// Roles permitidos neste app
+  static const _rolesPermitidos = ['MOTOBOY', 'ADMIN'];
+
   Future<void> login(String email, String senha) async {
     final response = await http.post(
       Uri.parse('$_baseUrl/auth/login'),
@@ -38,12 +46,27 @@ class AuthService extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
+      final role = json['role'] as String? ?? '';
+
+      // ── Validação de perfil ──────────────────────────────
+      if (!_rolesPermitidos.contains(role)) {
+        String msg;
+        if (role == 'LOJA') {
+          msg = 'Este é o app do Motoboy. Use o app da Loja para acessar.';
+        } else if (role == 'SUPORTE') {
+          msg = 'Acesso de suporte disponível apenas no painel web.';
+        } else {
+          msg = 'Seu perfil ($role) não tem acesso a este aplicativo.';
+        }
+        throw Exception(msg);
+      }
+
       _usuario = Usuario.fromJson(json);
       await _storage.write(key: 'token', value: _usuario!.token);
       await _storage.write(key: 'usuario', value: jsonEncode(json));
       notifyListeners();
     } else {
-      throw Exception('Credenciais inválidas');
+      throw Exception('Email ou senha inválidos');
     }
   }
 

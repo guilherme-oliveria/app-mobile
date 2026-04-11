@@ -54,7 +54,13 @@ class _TrocarSenhaScreenState extends State<TrocarSenhaScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.of(context).pop(true); // retorna sucesso
+        // Se obrigatória (primeiro login), o Consumer no main.dart
+        // reconstrói automaticamente para HomeScreen quando
+        // deveAlterarSenha muda para false — não precisa de pop.
+        // Se aberta pelo menu, faz pop normal.
+        if (!widget.obrigatoria) {
+          Navigator.of(context).pop(true);
+        }
       }
     } catch (e) {
       setState(() => _erro = e.toString().replaceAll('Exception: ', ''));

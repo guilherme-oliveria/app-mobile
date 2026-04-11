@@ -1,0 +1,96 @@
+## O que é Firebase
+
+Firebase é uma **plataforma do Google** com vários serviços prontos para apps mobile/web. No seu projeto, ele foi adicionado para uma coisa específica:
+
+---
+
+## No seu projeto só usa para Push Notifications (FCM)
+
+```yaml
+# Firebase — descomentar quando configurar google-services.json
+# firebase_core: ^2.27.0        ← base obrigatória
+# firebase_messaging: ^14.7.19  ← notificações push (FCM)
+```
+
+**FCM = Firebase Cloud Messaging** — é o serviço que envia notificações para o celular mesmo com o app fechado.
+
+### Como funciona no seu projeto
+
+```
+Backend Java
+    │
+    │  "Nova entrega disponível!"
+    ▼
+Firebase FCM (Google)
+    │
+    │  Push notification
+    ▼
+App do Motoboy (celular)
+    └── toca, vibra, aparece notificação na tela
+```
+
+---
+
+## Quando você vai precisar configurar
+
+| Situação | Precisa do Firebase? |
+|---|---|
+| Testar login, cadastro, senhas | ❌ Não |
+| Testar entregas, pedidos, pagamento | ❌ Não |
+| Motoboy receber notificação de nova entrega | ✅ Sim |
+| Loja receber notificação que pedido foi aceito | ✅ Sim |
+| Qualquer push notification | ✅ Sim |
+
+**Agora no desenvolvimento** → Firebase desativado está correto, o app funciona normalmente sem ele.
+
+---
+
+## Quando chegar a hora, o que fazer
+
+### 1. Criar projeto no Firebase
+- Acessa **https://console.firebase.google.com**
+- Cria um projeto → adiciona app Android
+- Baixa o `google-services.json`
+
+### 2. Colocar o arquivo no projeto
+```
+motoboy_app/android/app/google-services.json  ← aqui
+store_app/android/app/google-services.json    ← e aqui
+```
+
+### 3. Descomentar nos dois apps
+
+**`pubspec.yaml`** dos dois apps:
+```yaml
+firebase_core: ^2.27.0
+firebase_messaging: ^14.7.19
+```
+
+**`main.dart`** dos dois apps:
+```dart
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // ← descomentar
+  runApp(const MotoboyApp());
+}
+```
+
+### 4. Configurar credenciais no backend
+No `docker-compose.yml` o backend já tem a variável preparada:
+```yaml
+# FIREBASE_CREDENTIALS_PATH: /app/firebase-credentials.json
+```
+Você baixa um JSON de credenciais do Firebase Console e passa para o container.
+
+---
+
+## Resumo
+
+| | |
+|---|---|
+| **O que é** | Plataforma Google com vários serviços |
+| **O que você usa** | Só FCM — notificações push |
+| **Precisa agora?** | Não — só quando quiser testar notificações |
+| **Impacto sem ele** | Zero — login, entregas, pagamento funcionam normal |

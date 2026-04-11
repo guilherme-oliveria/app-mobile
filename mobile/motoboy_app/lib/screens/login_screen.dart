@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
             _senhaCtrl.text.trim(),
           );
     } catch (e) {
-      setState(() => _erro = 'Email ou senha inválidos');
+      setState(() => _erro = e.toString().replaceAll('Exception: ', ''));
     } finally {
       if (mounted) setState(() => _carregando = false);
     }

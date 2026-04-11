@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart'; // TODO: descomentar quando configurar Firebase
 import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
 import 'services/pedido_service.dart';
@@ -9,7 +9,7 @@ import 'screens/trocar_senha_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp(); // TODO: descomentar quando configurar Firebase (google-services.json)
   runApp(const StoreApp());
 }
 

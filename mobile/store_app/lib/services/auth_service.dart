@@ -1,10 +1,14 @@
 // lib/services/auth_service.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
-const _baseUrl = 'http://10.0.2.2:8080/api';
+// Browser (Chrome/Edge) → localhost | Emulador Android → 10.0.2.2
+const _baseUrl = kIsWeb
+    ? 'http://localhost:8080/api'
+    : 'http://10.0.2.2:8080/api';
 
 class Usuario {
   final String token;
@@ -42,6 +46,9 @@ class AuthService extends ChangeNotifier {
     if (dados != null) { _usuario = Usuario.fromJson(jsonDecode(dados)); notifyListeners(); }
   }
 
+  /// Roles permitidos neste app
+  static const _rolesPermitidos = ['LOJA', 'ADMIN'];
+
   Future<void> login(String email, String senha) async {
     final res = await http.post(
       Uri.parse('$_baseUrl/auth/login'),
@@ -50,11 +57,26 @@ class AuthService extends ChangeNotifier {
     );
     if (res.statusCode == 200) {
       final json = jsonDecode(res.body);
+      final role = json['role'] as String? ?? '';
+
+      // ── Validação de perfil ──────────────────────────────
+      if (!_rolesPermitidos.contains(role)) {
+        String msg;
+        if (role == 'MOTOBOY') {
+          msg = 'Este é o app da Loja. Use o app do Motoboy para acessar.';
+        } else if (role == 'SUPORTE') {
+          msg = 'Acesso de suporte disponível apenas no painel web.';
+        } else {
+          msg = 'Seu perfil ($role) não tem acesso a este aplicativo.';
+        }
+        throw Exception(msg);
+      }
+
       _usuario = Usuario.fromJson(json);
       await _storage.write(key: 'usuario', value: jsonEncode(json));
       notifyListeners();
     } else {
-      throw Exception('Credenciais inválidas');
+      throw Exception('Email ou senha inválidos');
     }
   }
 
